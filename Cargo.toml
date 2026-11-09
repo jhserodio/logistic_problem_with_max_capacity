@@ -1,0 +1,6 @@
+[package]
+name = "logistic_problem_with_max_capacity"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
