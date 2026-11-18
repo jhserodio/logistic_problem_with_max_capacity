@@ -203,12 +203,28 @@ Esta formulação é exata, mas $\mathcal R$ pode ter tamanho exponencial. **Nã
 5. A Parte C respeita a distância máxima **individualmente para cada rota**.
 6. Instâncias impossíveis devem ser declaradas **inviáveis**, sem omitir clientes.
 
+Para cada rota utilizada, definimos a carga total como a soma das demandas de seus clientes e a distância total como a soma dos comprimentos de seus arcos. Denotamos por $\mathcal R_{\mathrm{usadas}}$ o conjunto das rotas efetivamente escolhidas.
+
+$$
+q_r=\sum_{i\in C_r^{\mathrm{clientes}}}d_i
+$$
+
+$$
+\ell_r=\sum_{(i,j)\in A_r}c_{ij}
+$$
+
 Os limites operacionais verificados são:
 
 $$
-\operatorname{carga}(r)\le Q,\qquad
-|\mathcal R_{\mathrm{usadas}}|\le K,\qquad
-\operatorname{dist}(r)\le L
+\boxed{q_r\le Q\qquad (r\in\mathcal R_{\mathrm{usadas}})}
+$$
+
+$$
+\boxed{\ell_r\le L\qquad (r\in\mathcal R_{\mathrm{usadas}})}
+$$
+
+$$
+\boxed{|\mathcal R_{\mathrm{usadas}}|\le K}
 $$
 
 **Estado:** formulação matemática revisada; ainda não há implementação/solver MILP nesta etapa.

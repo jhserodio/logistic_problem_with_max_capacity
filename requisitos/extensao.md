@@ -4,8 +4,16 @@
 
 A opção escolhida é a **Extensão 5 — Limite máximo de distância por veículo**. Cada rota precisa sair do depósito $0$, atender seus clientes e **retornar ao depósito** sem ultrapassar $L$.
 
+Definimos $\ell_r$ como a distância total de uma rota completa $r$, e $A_r$ como o conjunto de arcos percorridos por ela:
+
 $$
-\boxed{\operatorname{dist}(r)=\sum_{(i,j)\in r}c_{ij}\le L\qquad\text{para cada rota }r}
+\ell_r=\sum_{(i,j)\in A_r}c_{ij}
+$$
+
+A nova restrição deve valer para cada rota utilizada:
+
+$$
+\boxed{\ell_r\le L}
 $$
 
 Nesta versão, $c_{ij}$ é **simultaneamente a distância usada na restrição e o custo minimizado**. Não confundir o limite por rota $L$ com um limite da soma de todas as rotas. A capacidade $Q$ e o máximo de veículos $K$ permanecem vigentes.
@@ -206,12 +214,18 @@ $$
 n\in\{8,10,12,14,16,18,20\}
 $$
 
-Limites operacionais conferidos nos testes:
+Definimos $q_r$ como a carga total de uma rota e $m$ como o número de rotas utilizadas. Os limites operacionais conferidos nos testes são:
 
 $$
-\operatorname{carga}(r)\le Q,\quad
-\operatorname{dist}(r)\le L,\quad
-\text{quantidade de rotas}\le K
+\boxed{q_r\le Q}
+$$
+
+$$
+\boxed{\ell_r\le L}
+$$
+
+$$
+\boxed{m\le K}
 $$
 
 Para os testes até 20 clientes, um bitmask de 64 bits é suficiente. A dimensão dos conjuntos, não o valor numérico de $L$, será o principal fator de escala do estado.
