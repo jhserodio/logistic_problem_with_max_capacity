@@ -1,57 +1,170 @@
-# Parte B – Formulação por Programação Dinâmica
+# Parte B — Formulação por Programação Dinâmica (PD)
 
-A modelagem a seguir resolve a versão determinística do CVRP, garantindo a exatidão exigida pelo trabalho e mapeando todas as variáveis de estado. O isolamento desta lógica matemática garante que, no futuro, a abordagem de Programação Dinâmica (PD) possa ser substituída por outras técnicas (como heurísticas ou simulações) para lidar com o modelo estocástico sem comprometer a estrutura do problema.
+## 1. Estratégia escolhida
 
-### Definição do Estado
+Em lugar da PD global inicial com estado \((S,i,q)\), adotamos **duas PDs exatas por subconjuntos**, sob a hipótese da [Parte A](./modelagem.md) de que o custo minimizado é a própria distância \(c_{ij}\).
 
-O estado na Programação Dinâmica deve capturar o histórico necessário para as decisões futuras sem violar as restrições físicas da operação. O estado é definido pela tupla $s = (S, i, q)$, onde:
+1. **Otimização da rota (Held–Karp):** calcular a menor distância para percorrer cada subconjunto de clientes em uma única rota.
+2. **Partição de clientes:** escolher até \(K\) desses subconjuntos/rotas, disjuntos, que atendam todos os clientes com distância total mínima.
 
-- $S$: subconjunto de clientes já atendidos ($S \subseteq C$).
-- $i$: vértice atual onde o veículo se encontra ($i \in V$).
-- $q$: carga acumulada no veículo até o momento ($0 \le q \le Q$).
+A **Parte C** acrescenta o limite de distância \(L\) simplesmente ao teste de viabilidade de cada rota. Não precisamos acrescentar distância e carga acumuladas ao estado da PD escolhida.
 
-### Conjunto de Decisões ($A(s)$)
+O problema é determinístico, com demandas conhecidas \(d_i>0\), capacidade \(Q\), até \(K\) veículos homogêneos, depósito \(0\), clientes \(C\) e distâncias dirigidas não negativas \(c_{ij}\).
 
-A partir do estado $(S, i, q)$, as decisões possíveis são:
+## 2. Primeira PD: menor rota para cada subconjunto
 
-- **Atender cliente $j$**: Deslocar-se para um cliente $j$ não visitado ($j \notin S$), desde que a capacidade restante do veículo suporte a demanda do cliente ($q + d_j \le Q$).
-- **Retornar ao depósito**: Voltar ao vértice $0$ para esvaziar a carga do veículo. Esta ação só é lógica e válida se o veículo não estiver já no depósito ($i \neq 0$).
-
-### Transições de Estado
-
-A função de transição atualiza os parâmetros do estado com base na decisão tomada pelo otimizador:
-
-- Se a decisão é **atender o cliente $j$**: o novo estado torna-se $(S \cup \{j\}, j, q + d_j)$.
-- Se a decisão é **retornar ao depósito**: o novo estado torna-se $(S, 0, 0)$.
-
-### Custo da Transição ($C(s, a)$)
-
-O custo associado a qualquer transição é a distância (ou custo financeiro) direta percorrida da posição atual $i$ até o próximo destino escolhido.
-
-- Custo para atender cliente $j$: $c_{ij}$
-- Custo para retornar ao depósito: $c_{i0}$
-
-### Condição Inicial e Condição Terminal
-
-- **Condição Inicial:** A operação inicia no depósito central, com o veículo vazio e nenhum cliente atendido. A avaliação começa no estado: $V(\emptyset, 0, 0)$.
-- **Condição Terminal:** Quando o conjunto de clientes visitados engloba todos os clientes do problema ($S = C$), a operação se encerra. A única ação restante é garantir que o veículo retorne ao depósito. O custo terminal a partir do nó $i$ é:
+Considere \(T\subseteq C\) e \(j\in T\). Definimos:
 
 $$
-V(C, i, q) = c_{i0}
+H(T,j)=\text{menor distância para sair de }0,\text{ visitar exatamente }T
+\text{ e terminar em }j
 $$
 
-### Recorrência de Bellman (Função de Valor)
+O retorno ao depósito ainda não está incluído em \(H\).
 
-A função de valor $V(S, i, q)$ minimiza o custo acumulado para visitar todos os clientes restantes de forma otimizada. Adaptando a estrutura para suportar a restrição de capacidade do veículo e a formação de múltiplas rotas, temos a seguinte equação de Bellman:
+**Caso base**
 
 $$
-V(S, i, q) = \min
+\boxed{H(\{j\},j)=c_{0j}}.
+$$
+
+**Recorrência de Bellman / Held–Karp**
+
+Para \(|T|\ge2\):
+
+$$
+\boxed{
+H(T,j)=\min_{i\in T\setminus\{j\}}
+\{H(T\setminus\{j\},i)+c_{ij}\}
+}.
+$$
+
+A distância da melhor **rota fechada** que atende exatamente \(T\) é:
+
+$$
+\boxed{
+D(T)=\min_{j\in T}\{H(T,j)+c_{j0}\}
+}.
+$$
+
+Guardar o predecessor que atingiu cada mínimo permite reconstruir a ordem das visitas. O modelo aceita custos/direções assimétricos; não usa desigualdade triangular.
+
+A demanda do subconjunto é conhecida diretamente:
+
+$$
+A(T)=\sum_{i\in T}d_i.
+$$
+
+No CVRP base, definimos o custo de uma rota admissível:
+
+$$
+r_Q(T)=
 \begin{cases}
-\min\limits_{\substack{j \in C \setminus S \\ q + d_j \le Q}} \{ c_{ij} + V(S \cup \{j\}, j, q + d_j) \} & \text{(Decisão 1: Atender novo cliente)} \\
-c_{i0} + V(S, 0, 0) & \text{(Decisão 2: Retornar ao depósito, se } i \neq 0 \text{)}
+D(T), & A(T)\le Q,\\
++\infty, & A(T)>Q.
 \end{cases}
+\qquad (T\ne\varnothing)
 $$
 
-### Evitando a Recomputação (Memoização)
+Usamos \(+\infty\) para indicar rota inviável. Como \(d_i>0\), é seguro não expandir subconjuntos cuja demanda já excedeu \(Q\).
 
-Como múltiplas sequências de rotas podem atingir exatamente o mesmo estado consolidado $(S, i, q)$ em tempos diferentes, o algoritmo fará uso de memoização. Os resultados da função $V(S, i, q)$ serão armazenados em cache durante a computação (Top-Down). Se o otimizador alcançar um estado já mapeado através de um caminho alternativo, ele resgatará o valor ótimo diretamente do cache. Isso evita a expansão de uma árvore de busca exaustiva, garantindo a eficiência temporal baseada no princípio da optimalidade de Bellman.
+**Extensão C:** substituímos \(r_Q(T)\) por \(r_{Q,L}(T)\), que também exige \(D(T)\le L\). A recorrência de \(H\) permanece igual.
+
+## 3. Segunda PD: partição das rotas e limite de veículos
+
+Seja:
+
+$$
+G(S,k)=\text{menor distância para atender exatamente os clientes de }S
+\text{ usando no máximo }k\text{ rotas}.
+$$
+
+O conjunto \(S\subseteq C\) representa clientes **ainda a atender**. Cada transição escolhe uma rota completa para um subconjunto \(T\subseteq S\).
+
+**Casos base**
+
+$$
+G(\varnothing,k)=0\quad(k\ge0),
+$$
+
+$$
+G(S,0)=+\infty\quad(S\ne\varnothing).
+$$
+
+Para evitar analisar repetidamente a mesma partição em ordens diferentes, fixe um cliente âncora \(a(S)\in S\) (por exemplo, o menor índice).
+
+**Recorrência de Bellman**
+
+$$
+\boxed{
+G(S,k)=
+\min_{\substack{T\subseteq S,\ a(S)\in T\\r_Q(T)<+\infty}}
+\{r_Q(T)+G(S\setminus T,k-1)\}
+}
+\quad(S\ne\varnothing,\ k\ge1).
+$$
+
+A solução do problema-base é:
+
+$$
+\boxed{Z^*=G(C,K)}.
+$$
+
+Se o resultado for \(+\infty\), nenhuma solução respeita todas as restrições. Com a Parte C, basta utilizar \(r_{Q,L}(T)\) na mesma fórmula.
+
+O parâmetro **\(K\) é indispensável**: a PD anterior \((S,i,q)\) permitia iniciar uma quantidade ilimitada de novas rotas ao retornar ao depósito e, portanto, não representava necessariamente o mesmo problema que o MILP.
+
+## 4. Por que a decomposição é exata?
+
+1. Toda solução viável do CVRP corresponde a uma partição dos clientes em subconjuntos não vazios, um por rota.
+2. Para cada subconjunto \(T\), trocar a ordem atual por uma que obtenha \(D(T)\) não aumenta a distância, não altera a demanda transportada e não altera o número de veículos.
+3. A recorrência de \(G\) examina todas as partições possíveis em até \(K\) subconjuntos viáveis, escolhendo a de menor custo.
+4. Portanto, \(G(C,K)\) é o mínimo global. Esse raciocínio continua válido quando a Parte C restringe as rotas por \(D(T)\le L\), já que a rota mais curta também é a que tem maior chance de cumprir o limite.
+
+A prova supõe que **custo e distância são a mesma grandeza** (ou proporcionais por um fator positivo). Se fossem diferentes, uma rota de menor custo poderia violar \(L\) mesmo existindo outra de custo maior que respeita \(L\). Nesse caso, seria necessário resolver cada subproblema com restrição de recursos, por exemplo por rótulos não dominados de **(custo, distância)**.
+
+## 5. Complexidade
+
+Para \(n\) clientes:
+
+| Etapa | Tempo (limite superior) | Memória |
+|---|---|---|
+| Somas de demanda \(A(T)\) para todos os subconjuntos | \(O(2^n)\) com recorrência incremental | \(O(2^n)\) |
+| Held–Karp \(H(T,j)\) e predecessores | \(O(n^2 2^n)\) | \(O(n2^n)\) |
+| Partição \(G(S,k)\) e escolhas | \(O(K3^n)\) | \(O(K2^n)\) |
+| **Total** | **\(O(n^2 2^n+K3^n)\)** | **\(O((n+K)2^n)\)** |
+
+Fixar a âncora reduz duplicações, mas não elimina o limite exponencial da enumeração de subconjuntos. As podas por capacidade e, na Parte C, distância, podem melhorar significativamente as instâncias práticas sem alterar esse limite geral.
+
+Essa complexidade **não depende numericamente de \(Q\) ou \(L\)**: ambos são usados para decidir se uma rota é viável, não como índices discretos das tabelas.
+
+A proposta não é garantidamente mais rápida do que a PD global original em todas as instâncias; a qualidade do trabalho será reforçada por medições de tempo, memória, número de estados e custo ótimo.
+
+## 6. Memoização e reconstrução de soluções
+
+Guardar:
+
+- Um bitmask por conjunto \(T\) ou \(S\), com os \(n\) clientes representados por bits de \(0\) a \(n-1\) (o depósito não ocupa bit).
+- Os valores e predecessores de \(H(T,j)\).
+- A demanda \(A(T)\) e o custo de rota \(r_Q(T)\) ou \(r_{Q,L}(T)\).
+- O valor \(G(S,k)\) e o subconjunto \(T\) escolhido para cada estado.
+
+Reconstrução:
+
+1. Começar em \((C,K)\) e recuperar o subconjunto \(T\) escolhido.
+2. Recuperar, via predecessores de \(H\), a ordem ótima \(0\to\cdots\to0\) para \(T\).
+3. Avançar para \((C\setminus T,K-1)\); repetir até o conjunto ficar vazio.
+4. Conferir todos os limites de capacidade, distância (Parte C), número de veículos e custo total.
+
+Para os experimentos previstos até \(n=20\), um **u64** basta como bitmask; não é obrigatório usar u128. Podemos usar inteiros para distâncias exatas quando os dados forem inteiros, ou valores reais com critérios numéricos de comparação bem definidos. Não precisamos discretizar \(Q\) e \(L\) apenas para memoizar subconjuntos.
+
+## 7. Testes de correção previstos
+
+- Casos triviais de 1–3 clientes com solução calculada manualmente.
+- Um veículo suficiente versus dois veículos necessários.
+- Caso inviável por capacidade, por \(K\) insuficiente ou, após a Parte C, por distância máxima.
+- Verificação da inclusão do retorno ao depósito em todas as rotas.
+- Matrizes assimétricas; rotas com custos empatados.
+- Comparação entre o ótimo da PD e o ótimo do MILP da Parte A em instâncias pequenas.
+
+**Estado:** formulação revisada, ainda sem implementação da Parte D. O modelo estocástico futuro será estudado separadamente, sem exigir reutilização arquitetural do solver determinístico.
