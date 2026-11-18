@@ -1,148 +1,147 @@
 # Análise gráfica — CVRP determinístico
 
-Documentação complementar da [Parte A — MILP](./modelagem.md), [Parte B — PD](./formulacao.md) e [Parte C — distância máxima](./extensao.md). Os dois SVGs apresentam a **mesma instância didática**. A Figura 2 mostra uma **solução viável, não necessariamente ótima**.
+Esta análise complementa a [Parte A — modelo MILP](./modelagem.md), a [Parte B — Programação Dinâmica](./formulacao.md) e a [Parte C — limite de distância](./extensao.md). O objetivo é mostrar **a instância, o teste de mesa e a visualização gradual das rotas**. O exemplo é determinístico e **ilustra uma solução viável, não uma solução ótima comprovada**.
 
-## 1. Grafo do problema
+## 1. Grafo dirigido do problema
 
-![Grafo dirigido com seis clientes e um depósito](./figuras/cvrp_grafo_problema.svg)
+![Grafo com depósito central e seis clientes, sem legendas internas](./figuras/cvrp_grafo_problema.svg)
 
-**Figura 1.** O depósito é o vértice 0. Os clientes são os vértices 1 a 6, com demanda indicada abaixo de cada nó. Setas são arcos dirigidos; seus números representam distâncias. Mostramos nove arcos para manter a figura legível; a formulação geral admite todos os arcos entre vértices distintos.
+**Figura 1 — Grafo ilustrativo.** O vértice 0 representa o depósito; os vértices 1 a 6 representam clientes. As setas mostram o sentido de deslocamento, e os números em destaque são as distâncias dos arcos. O SVG possui fundo transparente; os pesos e vértices usam superfícies claras para legibilidade.
 
-### Conjuntos e notação
+### Legenda e definições
 
-**Clientes:**
+- **Vértices:** números dentro dos círculos. O círculo dourado é o depósito; os demais são clientes.
+- **Arcos:** setas que indicam deslocamentos dirigidos. O valor destacado junto a cada seta é o custo/distância daquele arco.
+- **Topologia:** a disposição do desenho é didática. A posição dos vértices não define a distância entre eles.
+
+**Conjunto de clientes:**
 
 ```math
 C=\{1,2,3,4,5,6\}
 ```
 
-**Vértices, incluindo o depósito:**
+**Vértices e arcos dirigidos do modelo geral:**
 
 ```math
 V=\{0\}\cup C
 ```
 
-**Arcos dirigidos da formulação:**
 
 ```math
 A=\{(i,j)\in V\times V:i\ne j\}
 ```
 
-**Distâncias dos arcos:**
+**Distâncias não negativas:**
 
 ```math
 c_{ij}\ge0
 ```
 
-### Parâmetros da instância didática
+**Observação:** apenas os nove arcos utilizados no teste de mesa são desenhados. O MILP e a PD descritos nas Partes A e B admitem todos os arcos entre vértices distintos; a instância completa precisará informar as demais distâncias. Por isso, ainda não podemos demonstrar que a solução ilustrada é ótima.
 
-**Demandas de cada cliente (ordem de 1 a 6):**
+### Parâmetros do exemplo
 
-```math
-(d_1,d_2,d_3,d_4,d_5,d_6)=(2,4,3,4,2,3)
-```
+| Parâmetro | Valor | Significado |
+|---|---:|---|
+| Q | 7 | Capacidade máxima de cada veículo |
+| K | 3 | Número máximo de veículos (uma rota por veículo) |
+| L | 18 | Distância máxima por rota completa |
 
-**Capacidade, número máximo de veículos e distância máxima por rota:**
+**Demandas dos clientes:**
 
-```math
-Q=7,\qquad K=3,\qquad L=18
-```
+| Cliente | 1 | 2 | 3 | 4 | 5 | 6 |
+|---|---:|---:|---:|---:|---:|---:|
+| Demanda | 2 | 4 | 3 | 4 | 2 | 3 |
 
-### Pesos associados às rotas ilustradas
+**Pesos dos arcos utilizados nas figuras:**
 
-**Arcos azuis:**
+| Rota | Arcos e respectivas distâncias |
+|---|---|
+| Azul | 0 → 1: **4**; 1 → 2: **3**; 2 → 0: **6** |
+| Verde | 0 → 3: **8**; 3 → 5: **4**; 5 → 0: **5** |
+| Laranja | 0 → 6: **3**; 6 → 4: **4**; 4 → 0: **7** |
 
-```math
-c_{01}=4,\quad c_{12}=3,\quad c_{20}=6
-```
+## 2. Teste de mesa — construção de uma solução candidata
 
-**Arcos verdes:**
+Escolhemos três conjuntos disjuntos de clientes para construir rotas candidatas, uma para cada veículo. Isso demonstra **como verificar uma resposta**; não simula todas as escolhas examinadas pela otimização exata.
 
-```math
-c_{03}=8,\quad c_{35}=4,\quad c_{50}=5
-```
-
-**Arcos laranja:**
-
-```math
-c_{06}=3,\quad c_{64}=4,\quad c_{40}=7
-```
-
-Os pesos não são medidos a partir das posições geométricas dos nós no desenho. Outros arcos do grafo geral não tiveram seus custos definidos neste exemplo e foram omitidos para simplificar a visualização.
-
-## 2. Grafo de uma solução viável
-
-![Solução ilustrativa em três rotas coloridas](./figuras/cvrp_solucao_exemplo.svg)
-
-**Figura 2.** Os mesmos vértices são particionados em três rotas. Cada veículo sai do depósito e retorna a ele. Cada rota respeita simultaneamente capacidade e distância máxima.
-
-### Rota 1 — azul
+**Partição candidata dos clientes:**
 
 ```math
-r_1:0\to1\to2\to0
+T_1=\{1,2\},\quad T_2=\{3,5\},\quad T_3=\{6,4\}
 ```
 
-**Carga:**
+Em cada linha do teste de mesa, acrescentamos a distância do próximo arco e a demanda do cliente de destino, quando esse destino não é o depósito. A coluna *demanda atendida na rota* soma as demandas dos clientes já visitados naquela rota; ela **não** representa a carga física restante no veículo. No retorno ao depósito, a demanda acumulada atendida permanece igual ao total da rota.
+
+| Rota | Etapa | Arco | Distância do arco | Demanda entregue | Demanda atendida na rota | Distância acumulada |
+|---|---:|---|---:|---:|---:|---:|
+| 1 — azul | 1 | 0 → 1 | 4 | 2 | 2 | 4 |
+| 1 — azul | 2 | 1 → 2 | 3 | 4 | 6 | 7 |
+| 1 — azul | 3 | 2 → 0 | 6 | 0 | **6** | **13** |
+| 2 — verde | 1 | 0 → 3 | 8 | 3 | 3 | 8 |
+| 2 — verde | 2 | 3 → 5 | 4 | 2 | 5 | 12 |
+| 2 — verde | 3 | 5 → 0 | 5 | 0 | **5** | **17** |
+| 3 — laranja | 1 | 0 → 6 | 3 | 3 | 3 | 3 |
+| 3 — laranja | 2 | 6 → 4 | 4 | 4 | 7 | 7 |
+| 3 — laranja | 3 | 4 → 0 | 7 | 0 | **7** | **14** |
+
+### Verificação das restrições
+
+| Rota | Clientes | Demanda total | Distância completa | Capacidade ≤ 7 | Distância ≤ 18 |
+|---|---|---:|---:|---|---|
+| 1 — azul | 1, 2 | 6 | 13 | Sim | Sim |
+| 2 — verde | 3, 5 | 5 | 17 | Sim | Sim |
+| 3 — laranja | 6, 4 | 7 | 14 | Sim | Sim |
+
+**Conservação do atendimento:** os seis clientes aparecem exatamente uma vez, em três conjuntos sem interseção.
+
+**Frota utilizada:**
 
 ```math
-q_{r_1}=d_1+d_2=2+4=6\le Q
+m=3\le K=3
 ```
 
-**Distância:**
+**Custo total da solução candidata (distância total):**
 
 ```math
-\ell_{r_1}=c_{01}+c_{12}+c_{20}=4+3+6=13\le L
+Z_{\mathrm{candidata}}=13+17+14=44
 ```
 
-### Rota 2 — verde
+Conclusão do teste: a partição é **viável** em relação aos dados mostrados. O valor 44 é apenas o custo da solução candidata; para obter o ótimo global, precisamos das distâncias dos demais arcos e da execução do algoritmo.
 
-```math
-r_2:0\to3\to5\to0
-```
+## 3. Representação gráfica passo a passo
 
-**Carga:**
+Os quatro SVGs abaixo preservam **as mesmas coordenadas dos vértices**. Cada etapa destaca uma rota nova, enquanto as rotas já construídas ficam atenuadas. A figura final mostra todas em destaque.
 
-```math
-q_{r_2}=d_3+d_5=3+2=5\le Q
-```
+### Etapa 1 — Construir a rota azul
 
-**Distância:**
+![Etapa 1: depósito, clientes 1 e 2, retorno ao depósito](./figuras/cvrp_solucao_etapa_1.svg)
 
-```math
-\ell_{r_2}=c_{03}+c_{35}+c_{50}=8+4+5=17\le L
-```
+**Figura 2 — Primeira rota.** Percurso: **0 → 1 → 2 → 0**. Demanda atendida: **6**. Distância total: **13**. Ambas respeitam os limites.
 
-### Rota 3 — laranja
+### Etapa 2 — Acrescentar a rota verde
 
-```math
-r_3:0\to6\to4\to0
-```
+![Etapa 2: rota azul atenuada e rota verde destacada](./figuras/cvrp_solucao_etapa_2.svg)
 
-**Carga:**
+**Figura 3 — Segunda rota.** Percurso: **0 → 3 → 5 → 0**. Demanda atendida: **5**. Distância total: **17**. As rotas azul e verde não compartilham clientes.
 
-```math
-q_{r_3}=d_6+d_4=3+4=7\le Q
-```
+### Etapa 3 — Acrescentar a rota laranja
 
-**Distância:**
+![Etapa 3: terceira rota destacada com as anteriores atenuadas](./figuras/cvrp_solucao_etapa_3.svg)
 
-```math
-\ell_{r_3}=c_{06}+c_{64}+c_{40}=3+4+7=14\le L
-```
+**Figura 4 — Terceira rota.** Percurso: **0 → 6 → 4 → 0**. Demanda atendida: **7**. Distância total: **14**. Todos os clientes foram atendidos e o número de veículos utilizados atingiu o limite.
 
-### Verificação global
+### Resultado — Todas as rotas simultaneamente
 
-Os seis clientes aparecem uma única vez, sem exceder o número de veículos. A distância total é:
+![Resultado: três rotas coloridas](./figuras/cvrp_solucao_exemplo.svg)
 
-```math
-m=3\le K,\qquad Z_{\mathrm{exemplo}}=13+17+14=44
-```
+**Figura 5 — Solução viável ilustrativa.** Os três circuitos partem do mesmo depósito, não repetem clientes e totalizam **44 unidades de distância**. As cores identificam somente as rotas: azul, verde e laranja.
 
-**Não afirmamos que 44 seja ótimo.** Apenas demonstramos uma combinação viável de rotas para os arcos e os parâmetros apresentados.
+## 4. Relação com a PD proposta
 
-## 3. Relação com a solução por Programação Dinâmica
+O **teste de mesa** mostra a verificação de uma partição candidata. A PD da Parte B realiza uma busca exata por rotas e partições, em vez de assumir essa escolha inicial.
 
-**Etapa 1: otimizar a rota para cada subconjunto.** Para um conjunto não vazio de clientes, a recorrência de Held–Karp determina o menor caminho do depósito até o cliente final, visitando precisamente aquele subconjunto.
+**Primeira etapa: Held–Karp encontra a melhor ordem para cada conjunto de clientes.**
 
 ```math
 H(\{j\},j)=c_{0j}
@@ -153,31 +152,35 @@ H(\{j\},j)=c_{0j}
 H(T,j)=\min_{i\in T\setminus\{j\}}\left(H(T\setminus\{j\},i)+c_{ij}\right)
 ```
 
-Com retorno obrigatório ao depósito, a melhor rota fechada tem comprimento:
+**Custo da rota fechada (incluindo a volta ao depósito):**
 
 ```math
 D(T)=\min_{j\in T}\left(H(T,j)+c_{j0}\right)
 ```
 
-Verificamos a carga e a distância do subconjunto:
+**Demanda total do conjunto e admissibilidade:**
 
 ```math
-A(T)=\sum_{i\in T}d_i,\qquad A(T)\le Q,\qquad D(T)\le L
+A(T)=\sum_{i\in T}d_i
 ```
 
-**Etapa 2: escolher as rotas.** O custo da rota admissível é:
+
+```math
+A(T)\le Q,\qquad D(T)\le L
+```
+
+**Segunda etapa: particionar os clientes em até K rotas viáveis.**
 
 ```math
 r_{Q,L}(T)=\begin{cases}D(T),&A(T)\le Q\ \text{e}\ D(T)\le L,\\+\infty,&\text{caso contrário.}\end{cases}
 ```
 
-Com um cliente âncora em cada conjunto, a PD particiona os clientes sem considerar repetidamente a mesma combinação em ordens diferentes:
 
 ```math
 G(S,k)=\min_{\substack{T\subseteq S,\ a(S)\in T\\r_{Q,L}(T)<+\infty}}\left(r_{Q,L}(T)+G(S\setminus T,k-1)\right)
 ```
 
-As condições iniciais e o objetivo são:
+**Condições de contorno e solução ótima:**
 
 ```math
 G(\varnothing,k)=0,\qquad G(S,0)=+\infty\quad(S\ne\varnothing)
@@ -188,8 +191,11 @@ G(\varnothing,k)=0,\qquad G(S,0)=+\infty\quad(S\ne\varnothing)
 Z^*=G(C,K)
 ```
 
-A Figura 2 ilustra uma partição possível. A PD completa compara as partições admissíveis e pode encontrar uma solução de custo inferior.
+A visualização representa **uma escolha possível de subconjuntos**. A recorrência calcula o custo mínimo entre todas as escolhas permitidas quando a matriz completa de distâncias estiver definida.
 
-## 4. Limitações da ilustração
+## 5. Limitações e próximos passos
 
-O desenho não representa coordenadas geográficas nem uma matriz de distâncias real. O CVRP desta etapa é determinístico; demandas e distâncias são parâmetros conhecidos. Um futuro VRPSD exigirá uma formulação separada para incerteza e decisões de recurso. Nenhum solver foi executado para produzir ou validar a otimalidade desta figura.
+- **Instância didática:** os nós são posicionados para visualização, não sobre coordenadas geográficas.
+- **Grafo ilustrado parcialmente:** somente nove arcos têm pesos informados. Isso basta para avaliar estas três rotas, mas não para comparar todas as soluções possíveis do CVRP completo.
+- **Modelo determinístico:** capacidade, demanda e distâncias são conhecidos neste exemplo; o futuro problema estocástico terá modelagem independente.
+- **Sem alegação de otimalidade:** a tabela e os SVGs demonstram viabilidade, não o resultado de um solver já implementado.
