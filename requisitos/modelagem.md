@@ -10,23 +10,23 @@ A extensão obrigatória de **distância máxima por rota** é especificada na [
 
 - **Depósito único:** veículos homogêneos, cada um realizando no máximo uma rota. O depósito é identificado pelo índice zero.
 
-$$
+```math
 0
-$$
+```
 
 - **Demandas determinísticas e indivisíveis:** conhecidas antes da otimização; cada cliente é atendido em uma única visita.
 
 - **Demandas positivas:** hipótese importante para a eliminação de subtours pela formulação MTZ. Clientes com demanda nula exigiriam restrições adicionais.
 
-$$
+```math
 0<d_i\le Q\qquad(i\in C)
-$$
+```
 
 - **Distância como custo:** os arcos têm distância finita e não negativa; admite-se uma matriz assimétrica, sem exigir desigualdade triangular.
 
-$$
+```math
 c_{ij}\ge 0,\qquad c_{ij}\ne c_{ji}\ \text{é permitido}
-$$
+```
 
 - **Escopo determinístico:** não há janelas de tempo nem demanda aleatória. O futuro modelo estocástico será estudado separadamente, sem compromisso de reutilizar o código.
 
@@ -36,85 +36,85 @@ Cada tópico apresenta sua notação em bloco matemático independente, evitando
 
 - **Número total de clientes:** quantidade de pontos de entrega.
 
-$$
+```math
 n\in\mathbb{Z}_{\ge1}
-$$
+```
 
 - **Conjunto de clientes:** todos os clientes que devem ser atendidos.
 
-$$
+```math
 C=\{1,2,\ldots,n\}
-$$
+```
 
 - **Conjunto de vértices:** depósito e clientes.
 
-$$
+```math
 V=\{0\}\cup C
-$$
+```
 
 - **Conjunto dos arcos dirigidos:** pares ordenados de vértices distintos.
 
-$$
+```math
 A=\{(i,j)\in V\times V:i\ne j\}
-$$
+```
 
 - **Distância de deslocamento:** valor não negativo de cada arco.
 
-$$
+```math
 c_{ij}\ge0\qquad((i,j)\in A)
-$$
+```
 
 - **Demanda dos clientes:** demanda positiva em cada ponto; demanda nula no depósito.
 
-$$
+```math
 d_i>0\ (i\in C),\qquad d_0=0
-$$
+```
 
 - **Capacidade de cada veículo:** limite superior da carga.
 
-$$
+```math
 Q>0
-$$
+```
 
 - **Número máximo de veículos e rotas:** limite operacional.
 
-$$
+```math
 K\in\mathbb{Z}_{\ge1}
-$$
+```
 
 - **Distância máxima por rota (Parte C):** inclui saída, visitas e retorno ao depósito.
 
-$$
+```math
 L>0
-$$
+```
 
 ### Variáveis
 
 - **Utilização de arcos:** decisão binária que indica se o arco participa das rotas escolhidas.
 
-$$
+```math
 x_{ij}\in\{0,1\}\qquad((i,j)\in A)
-$$
+```
 
 - **Carga acumulada:** variável auxiliar após visitar cada cliente; não identifica um veículo individual.
 
-$$
+```math
 u_i\in\mathbb{R}\qquad(i\in C)
-$$
+```
 
 - **Distância acumulada (Parte C):** variável auxiliar até a chegada a cada cliente.
 
-$$
+```math
 w_i\in\mathbb{R}\qquad(i\in C)
-$$
+```
 
 ## 2. Função objetivo
 
 Minimizar a distância total percorrida por todas as rotas:
 
-$$
+```math
 \boxed{\min Z=\sum_{(i,j)\in A} c_{ij}x_{ij}}
-$$
+```
 
 Se, em outro problema, custo financeiro e distância forem diferentes, devemos introduzir parâmetros distintos. A equivalência entre custo e distância é **fundamental** para a simplificação de PD adotada na [Parte B](./formulacao.md).
 
@@ -122,27 +122,27 @@ Se, em outro problema, custo financeiro e distância forem diferentes, devemos i
 
 Cada cliente recebe uma visita e é deixado exatamente uma vez:
 
-$$
+```math
 \sum_{\substack{i\in V\\i\ne j}}x_{ij}=1
 \qquad \forall j\in C
-$$
+```
 
-$$
+```math
 \sum_{\substack{j\in V\\j\ne i}}x_{ij}=1
 \qquad \forall i\in C
-$$
+```
 
 Essas equações garantem os graus de entrada e saída dos clientes; **sozinhas não eliminam subtours** desconectados do depósito.
 
 ## 4. Depósito e limite de veículos
 
-$$
+```math
 \sum_{j\in C}x_{0j}=\sum_{i\in C}x_{i0}
-$$
+```
 
-$$
+```math
 \sum_{j\in C}x_{0j}\le K
-$$
+```
 
 Cada saída do depósito inicia uma rota e cada chegada finaliza uma rota. A interpretação adotada é **até $K$ rotas**, e não necessariamente $K$ rotas utilizadas. O valor de $K$ também deve ser observado na PD; omiti-lo alteraria o problema resolvido.
 
@@ -150,18 +150,18 @@ Cada saída do depósito inicia uma rota e cada chegada finaliza uma rota. A int
 
 Para todo cliente:
 
-$$
+```math
 d_i\le u_i\le Q \qquad \forall i\in C
-$$
+```
 
 Para cada par de clientes distintos:
 
-$$
+```math
 \boxed{
 u_j\ge u_i+d_j-Q(1-x_{ij})
 \qquad \forall i,j\in C,\ i\ne j
 }
-$$
+```
 
 Se $x_{ij}=1$, a carga acumulada em $j$ deve ser pelo menos a carga em $i$ mais $d_j$. Se $x_{ij}=0$, o termo $Q(1-x_{ij})$ desativa adequadamente a implicação, dadas as cotas de $u$.
 
@@ -169,10 +169,10 @@ Se $x_{ij}=1$, a carga acumulada em $j$ deve ser pelo menos a carga em $i$ mais 
 
 ## 6. Domínios e interpretação
 
-$$
+```math
 x_{ij}\in\{0,1\}\quad((i,j)\in A),\qquad
 d_i\le u_i\le Q\quad(i\in C).
-$$
+```
 
 Os laços $x_{ii}$ não existem porque $(i,i)\notin A$. As restrições de grau, depósito e MTZ formam o CVRP base. As restrições adicionais em $w_i$, incluindo **saída e retorno ao depósito**, completam a variante CVRP com distância máxima na [Parte C](./extensao.md).
 
@@ -180,17 +180,17 @@ Os laços $x_{ii}$ não existem porque $(i,i)\notin A$. As restrições de grau,
 
 Para interpretar a nova PD, podemos também representar o problema por **rotas completas viáveis**. Seja $\mathcal R$ o conjunto das rotas que saem do depósito, atendem um subconjunto não vazio de clientes e retornam, respeitando $Q$ e, na extensão, $L$. Seja $C_r$ a distância total da rota $r$, $a_{ir}=1$ se a rota $r$ atende $i$, e $y_r\in\{0,1\}$ a decisão de utilizá-la.
 
-$$
+```math
 \min\sum_{r\in\mathcal R} C_r y_r
-$$
+```
 
 Sujeito a:
 
-$$
+```math
 \sum_{r\in\mathcal R}a_{ir}y_r=1\quad(\forall i\in C),
 \qquad
 \sum_{r\in\mathcal R}y_r\le K.
-$$
+```
 
 Esta formulação é exata, mas $\mathcal R$ pode ter tamanho exponencial. **Não substitui a exigência de apresentar o MILP com MTZ**: é uma interpretação complementar, diretamente relacionada à decomposição por subconjuntos da Parte B.
 
@@ -205,26 +205,26 @@ Esta formulação é exata, mas $\mathcal R$ pode ter tamanho exponencial. **Nã
 
 Para cada rota utilizada $r$, sejam $\mathcal C_r$ o conjunto de clientes atendidos e $A_r$ o conjunto dos arcos percorridos. Denotamos por $\mathcal R_{\mathrm{usadas}}$ o conjunto das rotas escolhidas. A carga total e a distância total de cada rota são:
 
-$
+```math
 q_r=\sum_{i\in\mathcal C_r}d_i
-$
+```
 
-$
+```math
 \ell_r=\sum_{(i,j)\in A_r}c_{ij}
-$
+```
 
 Os limites operacionais verificados são:
 
-$$
+```math
 \boxed{q_r\le Q\qquad (r\in\mathcal R_{\mathrm{usadas}})}
-$$
+```
 
-$$
+```math
 \boxed{\ell_r\le L\qquad (r\in\mathcal R_{\mathrm{usadas}})}
-$$
+```
 
-$$
+```math
 \boxed{|\mathcal R_{\mathrm{usadas}}|\le K}
-$$
+```
 
 **Estado:** formulação matemática revisada; ainda não há implementação/solver MILP nesta etapa.

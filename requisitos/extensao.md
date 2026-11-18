@@ -6,15 +6,15 @@ A opção escolhida é a **Extensão 5 — Limite máximo de distância por veí
 
 Definimos $\ell_r$ como a distância total de uma rota completa $r$, e $A_r$ como o conjunto de arcos percorridos por ela:
 
-$$
+```math
 \ell_r=\sum_{(i,j)\in A_r}c_{ij}
-$$
+```
 
 A nova restrição deve valer para cada rota utilizada:
 
-$$
+```math
 \boxed{\ell_r\le L}
-$$
+```
 
 Nesta versão, $c_{ij}$ é **simultaneamente a distância usada na restrição e o custo minimizado**. Não confundir o limite por rota $L$ com um limite da soma de todas as rotas. A capacidade $Q$ e o máximo de veículos $K$ permanecem vigentes.
 
@@ -28,9 +28,9 @@ Preservamos as variáveis $x_{ij}$ (arcos) e $u_i$ (carga acumulada), as restri�
 
 Introduzimos $w_i$, distância acumulada desde a saída do depósito até a chegada ao cliente $i$, para $i\in C$:
 
-$$
+```math
 0\le w_i\le L\qquad\forall i\in C.
-$$
+```
 
 Não há $w_0$: a distância é reiniciada em cada nova rota.
 
@@ -38,11 +38,11 @@ Não há $w_0$: a distância é reiniciada em cada nova rota.
 
 Para quaisquer clientes diferentes $i,j\in C$:
 
-$$
+```math
 \boxed{
 w_j\ge w_i+c_{ij}-(L+c_{ij})(1-x_{ij})
 }.
-$$
+```
 
 Quando $x_{ij}=1$, a implicação ativa é $w_j\ge w_i+c_{ij}$. Quando $x_{ij}=0$, o lado direito torna-se $w_i-L\le0$, logo não impõe uma condição extra a $w_j\ge0$.
 
@@ -52,9 +52,9 @@ Quando $x_{ij}=1$, a implicação ativa é $w_j\ge w_i+c_{ij}$. Quando $x_{ij}=0
 
 Para todo $j\in C$:
 
-$$
+```math
 \boxed{w_j\ge c_{0j}x_{0j}}.
-$$
+```
 
 Se a rota começa com $0\to j$, sua distância inicial é pelo menos $c_{0j}$. Se não começa com esse arco, resta apenas $w_j\ge0$.
 
@@ -62,11 +62,11 @@ Se a rota começa com $0\to j$, sua distância inicial é pelo menos $c_{0j}$. S
 
 Para todo $i\in C$:
 
-$$
+```math
 \boxed{
 w_i+c_{i0}\le L+c_{i0}(1-x_{i0})
 }.
-$$
+```
 
 Se $x_{i0}=1$, exigimos $w_i+c_{i0}\le L$, **incluindo o último trecho de retorno**. Caso contrário, a desigualdade é redundante, pois $w_i\le L$.
 
@@ -78,27 +78,27 @@ Em qualquer rota escolhida $0\to i_1\to i_2\to\cdots\to i_m\to0$:
 
 1. **Saída do depósito:** a variável do primeiro cliente acumula a distância do trecho inicial.
 
-$$
+```math
 w_{i_1}\ge c_{0,i_1}
-$$
+```
 
 2. **Deslocamentos sucessivos:** cada variável acumula os trechos percorridos anteriormente.
 
-$$
+```math
 w_{i_h}\ge c_{0,i_1}+\sum_{t=1}^{h-1}c_{i_t,i_{t+1}}
-$$
+```
 
 3. **Retorno obrigatório:** a última perna deve caber no limite.
 
-$$
+```math
 w_{i_m}+c_{i_m,0}\le L
-$$
+```
 
 4. **Conclusão:** a soma de todos os trechos, incluindo ida e volta ao depósito, respeita a distância máxima.
 
-$$
+```math
 c_{0,i_1}+\sum_{t=1}^{m-1}c_{i_t,i_{t+1}}+c_{i_m,0}\le L
-$$
+```
 
 No sentido inverso, para qualquer conjunto de rotas viáveis, basta atribuir a cada $w_i$ a distância acumulada real ao longo de sua rota; as desigualdades são satisfeitas. Logo, a extensão é exata sob as hipóteses definidas.
 
@@ -112,25 +112,25 @@ A formulação inicial propunha uma PD global $(S,i,q,d_{\mathrm{acc}})$, em que
 
 Adotamos a **decomposição por subconjuntos** da [Parte B](./formulacao.md). Para cada conjunto $T\subseteq C$, Held–Karp calcula a menor rota fechada:
 
-$$
+```math
 D(T)=\min_{j\in T}\{H(T,j)+c_{j0}\}.
-$$
+```
 
 A demanda é determinada pelo próprio conjunto:
 
-$$
+```math
 A(T)=\sum_{i\in T}d_i.
-$$
+```
 
 Uma rota é admissível somente se **ambas** as condições forem verdadeiras:
 
-$$
+```math
 A(T)\le Q,\qquad D(T)\le L.
-$$
+```
 
 Definimos o custo da rota admissível na extensão:
 
-$$
+```math
 \boxed{
 r_{Q,L}(T)=
 \begin{cases}
@@ -138,7 +138,7 @@ D(T), & A(T)\le Q\ \text{e}\ D(T)\le L,\\
 +\infty, & \text{caso contrário}.
 \end{cases}
 }
-$$
+```
 
 Observe que $D(T)$ **inclui o retorno ao depósito**. Assim, não precisamos adicionar uma dimensão $d_{\mathrm{acc}}$ à tabela de memoização.
 
@@ -146,20 +146,20 @@ Observe que $D(T)$ **inclui o retorno ao depósito**. Assim, não precisamos adi
 
 Mantemos $G(S,k)$ da Parte B. Com um cliente âncora $a(S)\in S$:
 
-$$
+```math
 \boxed{
 G(S,k)=
 \min_{\substack{T\subseteq S,\ a(S)\in T\\r_{Q,L}(T)<+\infty}}
 \{r_{Q,L}(T)+G(S\setminus T,k-1)\}
 }
-$$
+```
 
 Para $S\ne\varnothing$ e $k\ge1$, com condições:
 
-$$
+```math
 G(\varnothing,k)=0,\qquad
 G(S,0)=+\infty\ (S\ne\varnothing).
-$$
+```
 
 O ótimo procurado é $G(C,K)$, ou $+\infty$ se a instância for inviável.
 
@@ -175,11 +175,11 @@ Um estado $(S,i,q,d_{\mathrm{acc}})$ exige indexar carga e distância acumuladas
 
 **Somente se os recursos forem discretizados**, com $Q'$ níveis de carga e $L'$ níveis de distância, um limite superior ilustrativo é:
 
-$$
+```math
 \text{estados}=O(K2^n nQ'L'),
 \qquad
 \text{tempo}=O(K2^n n^2Q'L').
-$$
+```
 
 Sem discretização, não é correto interpretar $Q$ e $L$, que podem ser reais, como números de estados. Na prática a memoização pode ser esparsa, mas o número de combinações distintas continua sendo um gargalo.
 
@@ -187,13 +187,13 @@ Sem discretização, não é correto interpretar $Q$ e $L$, que podem ser reais,
 
 O limite de distância é verificado sobre cada rota completa. Ele não é índice da tabela:
 
-$$
+```math
 \boxed{\text{tempo}=O(n^2 2^n+K3^n)}
-$$
+```
 
-$$
+```math
 \boxed{\text{memória}=O((n+K)2^n)}
-$$
+```
 
 A primeira parcela constrói as melhores rotas; a segunda combina subconjuntos em até $K$ rotas. O fator $3^n$ pode ser muito significativo em $n=18$ ou $20$: a nova abordagem **não** é garantidamente mais rápida para todas as instâncias, embora elimine a dependência explícita de $Q'$ e $L'$ no número de estados.
 
@@ -210,23 +210,23 @@ A implementação em Rust, quando iniciada, deverá verificar:
 5. Comparar o valor ótimo da PD com o MILP em instâncias pequenas.
 6. Medir tempo, pico de memória, custo ótimo, estados explorados e rotas reconstruídas nos tamanhos a seguir.
 
-$$
+```math
 n\in\{8,10,12,14,16,18,20\}
-$$
+```
 
 Definimos $q_r$ como a carga total de uma rota e $m$ como o número de rotas utilizadas. Os limites operacionais conferidos nos testes são:
 
-$$
+```math
 \boxed{q_r\le Q}
-$$
+```
 
-$$
+```math
 \boxed{\ell_r\le L}
-$$
+```
 
-$$
+```math
 \boxed{m\le K}
-$$
+```
 
 Para os testes até 20 clientes, um bitmask de 64 bits é suficiente. A dimensão dos conjuntos, não o valor numérico de $L$, será o principal fator de escala do estado.
 
