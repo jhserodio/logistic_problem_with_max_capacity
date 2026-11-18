@@ -6,12 +6,12 @@ Esta análise complementa a [Parte A — modelo MILP](./modelagem.md), a [Parte 
 
 ![Grafo com depósito central e seis clientes, sem legendas internas](./figuras/cvrp_grafo_problema.svg)
 
-**Figura 1 — Grafo ilustrativo.** O vértice 0 representa o depósito; os vértices 1 a 6 representam clientes. As setas mostram o sentido de deslocamento, e os números em destaque são as distâncias dos arcos. O SVG possui fundo transparente; os pesos e vértices usam superfícies claras para legibilidade.
+**Figura 1 — Grafo ilustrativo.** O vértice 0 representa o depósito; os clientes A, B, C, D, E e F correspondem, respectivamente, aos índices matemáticos 1 a 6. As setas indicam o sentido do deslocamento; os pesos são números em lozangos cinza-claros, posicionados sobre as arestas. O SVG mantém o fundo transparente.
 
 ### Legenda e definições
 
-- **Vértices:** números dentro dos círculos. O círculo dourado é o depósito; os demais são clientes.
-- **Arcos:** setas que indicam deslocamentos dirigidos. O valor destacado junto a cada seta é o custo/distância daquele arco.
+- **Vértices:** letras A–F dentro dos círculos identificam os clientes; o círculo dourado com 0 representa o depósito.
+- **Arcos:** setas que indicam deslocamentos dirigidos. O valor no lozango cinza-claro sobre cada aresta é a distância daquele arco.
 - **Topologia:** a disposição do desenho é didática. A posição dos vértices não define a distância entre eles.
 
 **Conjunto de clientes:**
@@ -47,11 +47,14 @@ c_{ij}\ge0
 | K | 3 | Número máximo de veículos (uma rota por veículo) |
 | L | 18 | Distância máxima por rota completa |
 
-**Demandas dos clientes:**
+**Correspondência dos rótulos visuais com os índices matemáticos:**
 
-| Cliente | 1 | 2 | 3 | 4 | 5 | 6 |
+| Rótulo SVG | A | B | C | D | E | F |
 |---|---:|---:|---:|---:|---:|---:|
+| Índice do modelo | 1 | 2 | 3 | 4 | 5 | 6 |
 | Demanda | 2 | 4 | 3 | 4 | 2 | 3 |
+
+Os índices numéricos continuam sendo utilizados na modelagem, no teste de mesa e nas equações das Partes A, B e C.
 
 **Pesos dos arcos utilizados nas figuras:**
 
@@ -117,19 +120,19 @@ Os quatro SVGs abaixo preservam **as mesmas coordenadas dos vértices**. Cada et
 
 ![Etapa 1: depósito, clientes 1 e 2, retorno ao depósito](./figuras/cvrp_solucao_etapa_1.svg)
 
-**Figura 2 — Primeira rota.** Percurso: **0 → 1 → 2 → 0**. Demanda atendida: **6**. Distância total: **13**. Ambas respeitam os limites.
+**Figura 2 — Primeira rota.** Percurso visual: **0 → A → B → 0** (índices 0 → 1 → 2 → 0). Demanda atendida: **6**. Distância total: **13**. Ambas respeitam os limites.
 
 ### Etapa 2 — Acrescentar a rota verde
 
 ![Etapa 2: rota azul atenuada e rota verde destacada](./figuras/cvrp_solucao_etapa_2.svg)
 
-**Figura 3 — Segunda rota.** Percurso: **0 → 3 → 5 → 0**. Demanda atendida: **5**. Distância total: **17**. As rotas azul e verde não compartilham clientes.
+**Figura 3 — Segunda rota.** Percurso visual: **0 → C → E → 0** (índices 0 → 3 → 5 → 0). Demanda atendida: **5**. Distância total: **17**. As rotas azul e verde não compartilham clientes.
 
 ### Etapa 3 — Acrescentar a rota laranja
 
 ![Etapa 3: terceira rota destacada com as anteriores atenuadas](./figuras/cvrp_solucao_etapa_3.svg)
 
-**Figura 4 — Terceira rota.** Percurso: **0 → 6 → 4 → 0**. Demanda atendida: **7**. Distância total: **14**. Todos os clientes foram atendidos e o número de veículos utilizados atingiu o limite.
+**Figura 4 — Terceira rota.** Percurso visual: **0 → F → D → 0** (índices 0 → 6 → 4 → 0). Demanda atendida: **7**. Distância total: **14**. Todos os clientes foram atendidos e o número de veículos utilizados atingiu o limite.
 
 ### Resultado — Todas as rotas simultaneamente
 
