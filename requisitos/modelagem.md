@@ -2,36 +2,111 @@
 
 ## 1. Escopo, hipóteses e notação
 
-Modelamos o **Capacitated Vehicle Routing Problem (CVRP)** determinístico: atender todos os clientes, com rotas que saem de um único depósito e retornam a ele, respeitando a capacidade dos veículos e utilizando **no máximo** \(K\) veículos.
+Modelamos o **Capacitated Vehicle Routing Problem (CVRP)** determinístico: atender todos os clientes, com rotas que saem de um único depósito e retornam a ele, respeitando a capacidade dos veículos e utilizando **no máximo** $K$ veículos.
 
 A extensão obrigatória de **distância máxima por rota** é especificada na [Parte C](./extensao.md); esta Parte A estabelece o modelo-base e identifica como a extensão se integra a ele.
 
 **Hipóteses para esta versão:**
 
-- Uma única base (depósito \(0\)); veículos homogêneos, cada um realizando no máximo uma rota.
-- Toda demanda é conhecida antes da otimização, integral e atendida em uma única visita (sem entregas fracionadas).
-- As demandas dos clientes são estritamente positivas: \(0<d_i\le Q\). Esta hipótese é importante para a prova de eliminação de subtours pelas restrições MTZ abaixo. Se houver clientes de demanda zero, será necessário impor eliminação de subtours separadamente.
-- A matriz \(c_{ij}\) mede **distância**, utilizada também como custo a minimizar; os valores são finitos, não negativos e podem ser assimétricos (\(c_{ij}\ne c_{ji}\)). Não é necessário supor desigualdade triangular.
-- Não existem janelas de tempo nem demanda aleatória nesta etapa. O futuro modelo estocástico será um estudo independente, não uma exigência de reutilização do código.
+- **Depósito único:** veículos homogêneos, cada um realizando no máximo uma rota. O depósito é identificado pelo índice zero.
+
+$$
+0
+$$
+
+- **Demandas determinísticas e indivisíveis:** conhecidas antes da otimização; cada cliente é atendido em uma única visita.
+
+- **Demandas positivas:** hipótese importante para a eliminação de subtours pela formulação MTZ. Clientes com demanda nula exigiriam restrições adicionais.
+
+$$
+0<d_i\le Q\qquad(i\in C)
+$$
+
+- **Distância como custo:** os arcos têm distância finita e não negativa; admite-se uma matriz assimétrica, sem exigir desigualdade triangular.
+
+$$
+c_{ij}\ge 0,\qquad c_{ij}\ne c_{ji}\ \text{é permitido}
+$$
+
+- **Escopo determinístico:** não há janelas de tempo nem demanda aleatória. O futuro modelo estocástico será estudado separadamente, sem compromisso de reutilizar o código.
 
 ### Conjuntos e parâmetros
 
-| Símbolo | Significado |
-|---|---|
-| \(C=\{1,\ldots,n\}\) | Clientes |
-| \(V=\{0\}\cup C\) | Depósito e clientes |
-| \(A=\{(i,j)\in V^2:i\ne j\}\) | Arcos dirigidos possíveis |
-| \(c_{ij}\ge0\) | Distância de \(i\) até \(j\) |
-| \(d_i>0\) | Demanda do cliente \(i\), com \(d_0=0\) |
-| \(Q>0\) | Capacidade de cada veículo |
-| \(K\in\mathbb{Z}_{\ge1}\) | Número máximo de veículos/rotas |
-| \(L>0\) | Distância máxima por rota (**Parte C**) |
+Cada tópico apresenta sua notação em bloco matemático independente, evitando LaTeX em tabelas Markdown.
+
+- **Número total de clientes:** quantidade de pontos de entrega.
+
+$$
+n\in\mathbb{Z}_{\ge1}
+$$
+
+- **Conjunto de clientes:** todos os clientes que devem ser atendidos.
+
+$$
+C=\{1,2,\ldots,n\}
+$$
+
+- **Conjunto de vértices:** depósito e clientes.
+
+$$
+V=\{0\}\cup C
+$$
+
+- **Conjunto dos arcos dirigidos:** pares ordenados de vértices distintos.
+
+$$
+A=\{(i,j)\in V\times V:i\ne j\}
+$$
+
+- **Distância de deslocamento:** valor não negativo de cada arco.
+
+$$
+c_{ij}\ge0\qquad((i,j)\in A)
+$$
+
+- **Demanda dos clientes:** demanda positiva em cada ponto; demanda nula no depósito.
+
+$$
+d_i>0\ (i\in C),\qquad d_0=0
+$$
+
+- **Capacidade de cada veículo:** limite superior da carga.
+
+$$
+Q>0
+$$
+
+- **Número máximo de veículos e rotas:** limite operacional.
+
+$$
+K\in\mathbb{Z}_{\ge1}
+$$
+
+- **Distância máxima por rota (Parte C):** inclui saída, visitas e retorno ao depósito.
+
+$$
+L>0
+$$
 
 ### Variáveis
 
-- \(x_{ij}\in\{0,1\}\), \((i,j)\in A\): indica se o arco \(i\to j\) é utilizado.
-- \(u_i\in\mathbb{R}\), \(i\in C\): carga acumulada imediatamente após visitar o cliente \(i\). É uma variável auxiliar de capacidade/ordenação, **não** representa a carga de um veículo individual nomeado.
-- \(w_i\in\mathbb{R}\), \(i\in C\): distância acumulada ao chegar ao cliente \(i\), introduzida apenas na **Parte C**.
+- **Utilização de arcos:** decisão binária que indica se o arco participa das rotas escolhidas.
+
+$$
+x_{ij}\in\{0,1\}\qquad((i,j)\in A)
+$$
+
+- **Carga acumulada:** variável auxiliar após visitar cada cliente; não identifica um veículo individual.
+
+$$
+u_i\in\mathbb{R}\qquad(i\in C)
+$$
+
+- **Distância acumulada (Parte C):** variável auxiliar até a chegada a cada cliente.
+
+$$
+w_i\in\mathbb{R}\qquad(i\in C)
+$$
 
 ## 2. Função objetivo
 
@@ -69,7 +144,7 @@ $$
 \sum_{j\in C}x_{0j}\le K
 $$
 
-Cada saída do depósito inicia uma rota e cada chegada finaliza uma rota. A interpretação adotada é **até \(K\) rotas**, e não necessariamente \(K\) rotas utilizadas. O valor de \(K\) também deve ser observado na PD; omiti-lo alteraria o problema resolvido.
+Cada saída do depósito inicia uma rota e cada chegada finaliza uma rota. A interpretação adotada é **até $K$ rotas**, e não necessariamente $K$ rotas utilizadas. O valor de $K$ também deve ser observado na PD; omiti-lo alteraria o problema resolvido.
 
 ## 5. Capacidade e eliminação de subtours (MTZ)
 
@@ -88,9 +163,9 @@ u_j\ge u_i+d_j-Q(1-x_{ij})
 }
 $$
 
-Se \(x_{ij}=1\), a carga acumulada em \(j\) deve ser pelo menos a carga em \(i\) mais \(d_j\). Se \(x_{ij}=0\), o termo \(Q(1-x_{ij})\) desativa adequadamente a implicação, dadas as cotas de \(u\).
+Se $x_{ij}=1$, a carga acumulada em $j$ deve ser pelo menos a carga em $i$ mais $d_j$. Se $x_{ij}=0$, o termo $Q(1-x_{ij})$ desativa adequadamente a implicação, dadas as cotas de $u$.
 
-**Por que essas restrições eliminam subtours?** Em um ciclo entre clientes \(i_1\to i_2\to\cdots\to i_m\to i_1\), somar as desigualdades ativas implicaria \(0\ge\sum_{h=1}^m d_{i_h}>0\), contradição. A prova depende de \(d_i>0\). O depósito não participa dessas relações MTZ, permitindo que a carga seja reiniciada entre rotas.
+**Por que essas restrições eliminam subtours?** Em um ciclo entre clientes $i_1\to i_2\to\cdots\to i_m\to i_1$, somar as desigualdades ativas implicaria $0\ge\sum_{h=1}^m d_{i_h}>0$, contradição. A prova depende de $d_i>0$. O depósito não participa dessas relações MTZ, permitindo que a carga seja reiniciada entre rotas.
 
 ## 6. Domínios e interpretação
 
@@ -99,11 +174,11 @@ x_{ij}\in\{0,1\}\quad((i,j)\in A),\qquad
 d_i\le u_i\le Q\quad(i\in C).
 $$
 
-Os laços \(x_{ii}\) não existem porque \((i,i)\notin A\). As restrições de grau, depósito e MTZ formam o CVRP base. As restrições adicionais em \(w_i\), incluindo **saída e retorno ao depósito**, completam a variante CVRP com distância máxima na [Parte C](./extensao.md).
+Os laços $x_{ii}$ não existem porque $(i,i)\notin A$. As restrições de grau, depósito e MTZ formam o CVRP base. As restrições adicionais em $w_i$, incluindo **saída e retorno ao depósito**, completam a variante CVRP com distância máxima na [Parte C](./extensao.md).
 
 ## 7. Formulação alternativa para comparação: particionamento em rotas
 
-Para interpretar a nova PD, podemos também representar o problema por **rotas completas viáveis**. Seja \(\mathcal R\) o conjunto das rotas que saem do depósito, atendem um subconjunto não vazio de clientes e retornam, respeitando \(Q\) e, na extensão, \(L\). Seja \(C_r\) a distância total da rota \(r\), \(a_{ir}=1\) se a rota \(r\) atende \(i\), e \(y_r\in\{0,1\}\) a decisão de utilizá-la.
+Para interpretar a nova PD, podemos também representar o problema por **rotas completas viáveis**. Seja $\mathcal R$ o conjunto das rotas que saem do depósito, atendem um subconjunto não vazio de clientes e retornam, respeitando $Q$ e, na extensão, $L$. Seja $C_r$ a distância total da rota $r$, $a_{ir}=1$ se a rota $r$ atende $i$, e $y_r\in\{0,1\}$ a decisão de utilizá-la.
 
 $$
 \min\sum_{r\in\mathcal R} C_r y_r
@@ -117,15 +192,23 @@ $$
 \sum_{r\in\mathcal R}y_r\le K.
 $$
 
-Esta formulação é exata, mas \(\mathcal R\) pode ter tamanho exponencial. **Não substitui a exigência de apresentar o MILP com MTZ**: é uma interpretação complementar, diretamente relacionada à decomposição por subconjuntos da Parte B.
+Esta formulação é exata, mas $\mathcal R$ pode ter tamanho exponencial. **Não substitui a exigência de apresentar o MILP com MTZ**: é uma interpretação complementar, diretamente relacionada à decomposição por subconjuntos da Parte B.
 
 ## 8. Verificações matemáticas esperadas
 
-1. Todo cliente é atendido exatamente uma vez e nenhuma rota viola \(Q\).
-2. O número de rotas utilizadas é no máximo \(K\).
-3. Cada rota começa e termina em \(0\); não aparecem ciclos de clientes desconectados.
+1. Cada cliente é atendido exatamente uma vez e nenhuma rota viola a capacidade.
+2. A quantidade de rotas utilizadas respeita o número máximo de veículos.
+3. Toda rota começa e termina no depósito, sem subtours isolados.
 4. O objetivo contabiliza **todos** os arcos, inclusive o retorno ao depósito.
-5. Após aplicar a Parte C, cada distância de rota é no máximo \(L\).
-6. Instâncias impossíveis devem ser declaradas **inviáveis**, nunca transformadas silenciosamente em rotas incompletas.
+5. A Parte C respeita a distância máxima **individualmente para cada rota**.
+6. Instâncias impossíveis devem ser declaradas **inviáveis**, sem omitir clientes.
+
+Os limites operacionais verificados são:
+
+$$
+\operatorname{carga}(r)\le Q,\qquad
+|\mathcal R_{\mathrm{usadas}}|\le K,\qquad
+\operatorname{dist}(r)\le L
+$$
 
 **Estado:** formulação matemática revisada; ainda não há implementação/solver MILP nesta etapa.
