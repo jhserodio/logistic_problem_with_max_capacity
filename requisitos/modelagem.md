@@ -228,3 +228,5 @@ Os limites operacionais verificados são:
 ```
 
 **Estado:** formulação matemática revisada; ainda não há implementação/solver MILP nesta etapa.
+
+**Complemento visual:** [Análise gráfica (grafos e exemplo de rotas)](./analise-grafica.md).

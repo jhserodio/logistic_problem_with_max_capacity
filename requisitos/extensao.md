@@ -237,3 +237,5 @@ Este é um **CVRP determinístico com distância limitada por rota**. Um futuro 
 Isso exigirá **uma nova formulação matemática**; não pressupomos que o mesmo código Rust, as mesmas recorrências ou as mesmas abstrações serão reutilizados. O ganho desta etapa é uma base conceitual rigorosa e um benchmark determinístico.
 
 **Estado:** extensão matemática revisada e integrada às Partes A e B; implementação e experimentos ainda pendentes.
+
+**Complemento visual:** [Análise gráfica (grafos e exemplo de rotas)](./analise-grafica.md).

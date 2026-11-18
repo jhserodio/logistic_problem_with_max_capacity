@@ -259,3 +259,5 @@ Para os experimentos previstos até $n=20$, um **u64** basta como bitmask; não 
 - Comparação entre o ótimo da PD e o ótimo do MILP da Parte A em instâncias pequenas.
 
 **Estado:** formulação revisada, ainda sem implementação da Parte D. O modelo estocástico futuro será estudado separadamente, sem exigir reutilização arquitetural do solver determinístico.
+
+**Complemento visual:** [Análise gráfica (grafos e exemplo de rotas)](./analise-grafica.md).
