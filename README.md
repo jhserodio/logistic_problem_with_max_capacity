@@ -48,6 +48,8 @@ A [instância de seis clientes](examples/instance.json) corresponde às demandas
 2. Uma segunda PD particiona todos os clientes em até K rotas, usando um cliente âncora por subconjunto para eliminar permutações equivalentes.
 3. A reconstrução recupera a ordem das visitas e o custo de cada rota.
 
+**Parte E — Análise formal:** [Complexidade do algoritmo](requisitos/complexidade.md), com contagem dos estados, transições e consumo estimado de memória.
+
 **Complexidade de pior caso:** tempo O(n² 2^n + K 3^n); memória O((n+K) 2^n), desconsiderando a matriz de distâncias. A implementação limita n a 20 clientes; mesmo nesse limite o custo de tempo e memória pode ser alto. Execute benchmarks em modo release.
 
-Esta solução é ótima para os dados fornecidos quando o custo a minimizar é a própria distância. Ela retorna inviabilidade quando as restrições não podem ser atendidas. O solver e sua interface de entrada estão concentrados inicialmente em src/main.rs, com operações de validação, otimização e reconstrução. Não há exigência de reutilizar código no estudo estocástico futuro.
+Esta solução é ótima para os dados fornecidos quando o custo a minimizar é a própria distância. Ela retorna inviabilidade quando as restrições não podem ser atendidas. O algoritmo exato e seus testes estão em `src/lib.rs`; `src/main.rs` contém a interface CLI para executar as instâncias JSON. Não há exigência de reutilizar código no estudo estocástico futuro.

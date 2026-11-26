@@ -191,6 +191,8 @@ Os limites superiores são apresentados por etapa, com equações fora da lista.
 \boxed{\text{Memória}=O((n+K)2^n)}
 ```
 
+A demonstração das contagens de estados, do fator $3^n$ e do consumo real estimado de memória está na [Parte E — Complexidade](./complexidade.md).
+
 Fixar a âncora reduz duplicações, mas não elimina o limite exponencial da enumeração de subconjuntos. As podas por capacidade e, na Parte C, distância, podem melhorar significativamente as instâncias práticas sem alterar esse limite geral.
 
 Essa complexidade **não depende numericamente de $Q$ ou $L$**: ambos são usados para decidir se uma rota é viável, não como índices discretos das tabelas.
