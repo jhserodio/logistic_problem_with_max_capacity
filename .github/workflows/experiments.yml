@@ -1,0 +1,48 @@
+name: Parte F - Experimentos computacionais
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+    paths:
+      - "src/lib.rs"
+      - "src/bin/experiment.rs"
+      - "scripts/parte_f.py"
+      - ".github/workflows/experiments.yml"
+permissions:
+  contents: write
+concurrency:
+  group: parte-f-cvrp
+  cancel-in-progress: true
+jobs:
+  experiments:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Testar Rust
+        run: cargo test --all-targets
+      - name: Compilar modo release
+        run: cargo build --release --bin experiment
+      - name: Medir e gerar CSV e graficos SVG
+        run: python3 scripts/parte_f.py --timeout 55 --seed 7
+      - name: Arquivar relatorio e dados
+        uses: actions/upload-artifact@v4
+        with:
+          name: cvrp-parte-f
+          path: |
+            requisitos/experimentos.md
+            requisitos/resultados-f/
+      - name: Publicar resumo
+        run: cat requisitos/experimentos.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Publicar os resultados medidos no repositorio
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add requisitos/experimentos.md requisitos/resultados-f/
+          if git diff --cached --quiet; then
+            echo "Sem alteracoes."
+          else
+            git commit -m "docs: resultados medidos da Parte F [skip ci]"
+            git push origin HEAD:master
+          fi
