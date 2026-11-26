@@ -16,7 +16,7 @@ from xml.sax.saxutils import escape
 
 ROOT = Path(__file__).resolve().parents[1]
 SIZES = (8, 10, 12, 14, 16, 18, 20)
-SERIES = (1, 2)
+SERIES = (1, 2, 3)
 FIELDS = ("serie n k q l seed status reps tempo_ms rss_kib masks hk_slots hk_states "
           "hk_transitions feasible_subsets choices_slots partition_states "
           "partition_candidates cost routes served note").split()
@@ -26,7 +26,8 @@ def run_once(binary, n, k, seed, timeout):
     with tempfile.TemporaryDirectory() as directory:
         rss_file = Path(directory) / "rss"
         command = ["/usr/bin/time", "-f", "%M", "-o", str(rss_file),
-                   str(binary), f"--n={n}", f"--k={k}", f"--seed={seed}"]
+                   str(binary), f"--n={n}", f"--k={k}",
+                   f"--q={(n+2)//3 if k == 3 else n}", f"--seed={seed}"]
         process = subprocess.Popen(command, text=True, stdout=subprocess.PIPE,
                                    stderr=subprocess.PIPE, start_new_session=True)
         try:
@@ -46,27 +47,35 @@ def run_once(binary, n, k, seed, timeout):
 
 
 def check(record):
-    n, k = record["n"], record["k"]
+    n, k, q = record["n"], record["k"], record["q"]
     masks = 1 << n
-    expected = {
+    met = record["metrics"]
+    expected_slots = {
         "masks_total": masks,
         "held_karp_slots": n * masks,
+        "partition_choice_slots": (k + 1) * masks,
+    }
+    for name, number in expected_slots.items():
+        if met[name] != number:
+            raise RuntimeError(f"slots incorretos n={n} k={k} {name}")
+    bounds = {
         "held_karp_states": n * masks // 2,
         "held_karp_transitions": n * (n-1) * masks // 4,
         "feasible_route_subsets": masks - 1,
-        "partition_choice_slots": (k + 1) * masks,
         "partition_states": (k - 1) * (masks - 1),
         "partition_candidates": (k - 1) * ((3**n - 1) // 2),
     }
-    for key, value in expected.items():
-        if record["metrics"][key] != value:
-            raise RuntimeError(f"métrica divergente: n={n} k={k} {key} "
-                               f"{record['metrics'][key]} != {value}")
+    for name, upper in bounds.items():
+        if not (0 <= met[name] <= upper):
+            raise RuntimeError(f"métrica excedeu limite n={n} k={k} {name}")
+        if k <= 2 and met[name] != upper:
+            raise RuntimeError(f"sem poda deveria atingir limite n={n} k={k} {name}")
     if record["status"] != "optimal" or record["clients_served"] != n:
         raise RuntimeError(f"resultado incompleto n={n} k={k}")
     if not (1 <= record["routes"] <= k):
         raise RuntimeError(f"rotas inválidas n={n} k={k}")
-
+    if k == 3 and (q != (n+2)//3 or record["routes"] != 3):
+        raise RuntimeError(f"capacidade restrita não gerou exatamente três rotas n={n}")
 
 def collect(timeout, seed):
     rows = []
@@ -94,7 +103,7 @@ def collect(timeout, seed):
             met = result["metrics"] if result else {}
             row = dict.fromkeys(FIELDS, "")
             row.update({
-                "serie": f"K={k}", "n": n, "k": k, "q": n, "l": 1000000,
+                "serie": f"K={k}", "n": n, "k": k, "q": (n+2)//3 if k == 3 else n, "l": 1000000,
                 "seed": seed, "status": status, "reps": len(measurements),
                 "tempo_ms": round(statistics.median(measurements), 4) if measurements else "",
                 "rss_kib": max(peaks) if peaks else "",
