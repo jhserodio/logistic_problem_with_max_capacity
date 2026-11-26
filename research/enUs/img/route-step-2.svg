@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1000" height="740" viewBox="0 0 1000 740" role="img" aria-labelledby="title description">
-<title id="title">Etapa 2: segunda rota</title>
-<desc id="description">Rota 1 atenuada e Rota 2 destacada em verde: depósito, cliente C, cliente E e retorno ao depósito.</desc>
+<title id="title">Step 2: second route</title>
+<desc id="description">Route 1 faded and Route 2 highlighted in green: depot, customer C, customer E and return to depot.</desc>
 <defs><marker id="arrow-1" viewBox="0 0 12 12" markerWidth="7" markerHeight="7" refX="9" refY="6" orient="auto"><path d="M 0 0 L 12 6 L 0 12 z" fill="#2563eb"/></marker><marker id="arrow-2" viewBox="0 0 12 12" markerWidth="7" markerHeight="7" refX="9" refY="6" orient="auto"><path d="M 0 0 L 12 6 L 0 12 z" fill="#059669"/></marker><marker id="arrow-3" viewBox="0 0 12 12" markerWidth="7" markerHeight="7" refX="9" refY="6" orient="auto"><path d="M 0 0 L 12 6 L 0 12 z" fill="#ea580c"/></marker><marker id="arrow-gray" viewBox="0 0 12 12" markerWidth="7" markerHeight="7" refX="9" refY="6" orient="auto"><path d="M 0 0 L 12 6 L 0 12 z" fill="#64748b"/></marker></defs>
 <line x1="464.4" y1="322.1" x2="369.3" y2="175.1" fill="none" stroke="#2563eb" stroke-width="3.2" stroke-linecap="round" marker-end="url(#arrow-1)" opacity="0.23"/>
 <line x1="384.0" y1="139.0" x2="643.0" y2="139.0" fill="none" stroke="#2563eb" stroke-width="3.2" stroke-linecap="round" marker-end="url(#arrow-1)" opacity="0.23"/>
