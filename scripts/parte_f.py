@@ -186,10 +186,10 @@ def report(rows, output, timeout, seed):
         "O experimento mede o comportamento do resolvedor CVRP exato em Rust,",
         "comparando as contagens observadas com a análise teórica da [Parte E](./complexidade.md).",
         f"Executado em {now}, Ubuntu 24.04, {platform.machine()}, CPU: {cpu}, {os.cpu_count()} CPUs lógicas; compilador {rust}.",
-        f"Foram considerados n em {SIZES}, nas séries K=1 e K=2, com semente {seed}, Q=n, L=1.000.000 e demanda unitária.",
+        f"Foram considerados n em {SIZES}, nas séries K=1, K=2 e K=3, com semente {seed}, L=1.000.000 e demanda unitária.",
         "Uma matriz dirigida determinística fornece distâncias inteiras positivas de 1 a 29;",
         "a fórmula e a semente encontram-se em src/bin/experiment.rs.",
-        "A capacidade e a distância não podam subconjuntos: é uma família deliberadamente densa,",
+        "K=1 e K=2 não sofrem podas; K=3 usa Q=ceil(n/3), forçando três rotas e podas por capacidade.",
         "útil para observar o pior crescimento combinatório, não uma simulação geográfica real.",
         "Tempo: mediana do método solve() sem instrumentação, medido pelo Rust Instant;",
         "3 repetições até n=14, 2 em n=16 e 1 em n=18/20.",
@@ -200,14 +200,14 @@ def report(rows, output, timeout, seed):
         "",
         "## 2. Resultados",
         "",
-        "| Série | n | Subconjuntos 2^n | Estados HK | Candidatos partição | Tempo mediano (ms) | RSS (MiB) | Custo ótimo | Rotas | Atendidos | Status |",
-        "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|",
+        "| Série | n | Q | Subconjuntos 2^n | Estados HK | Candidatos partição | Tempo mediano (ms) | RSS (MiB) | Custo ótimo | Rotas | Atendidos | Status |",
+        "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|",
     ]
     for r in rows:
         mem = f"{r['rss_kib']/1024:.2f}" if r["rss_kib"] != "" else "—"
         time = f"{r['tempo_ms']:.4f}" if r["tempo_ms"] != "" else "—"
         lines.append(
-            f"| {r['serie']} | {r['n']} | {number(r['masks'])} | {number(r['hk_states'])} | "
+            f"| {r['serie']} | {r['n']} | {r['q']} | {number(r['masks'])} | {number(r['hk_states'])} | "
             f"{number(r['partition_candidates'])} | {time} | {mem} | {number(r['cost'])} | "
             f"{number(r['routes'])} | {number(r['served'])} | {r['status']} |"
         )
@@ -237,7 +237,8 @@ def report(rows, output, timeout, seed):
         "- máscaras = 2^n;",
         "- estados Held–Karp avaliados = n × 2^(n−1);",
         "- transições Held–Karp = n(n−1) × 2^(n−2);",
-        "- candidatos da partição = (K−1)(3^n−1)/2, para K=1 ou K=2.",
+        "- candidatos da partição = (K−1)(3^n−1)/2 para K=1 e K=2 sem poda.",
+        "- Para K=3 o crescimento anterior é uma cota superior; os contadores mostram as podas.",
         "",
         "Portanto, a contagem observada dos estados e transições é exatamente compatível",
         "com a análise combinatória nas instâncias sem podas.",
@@ -258,13 +259,20 @@ def report(rows, output, timeout, seed):
         last=second[-1]
         lines.append(f"Em K=2, o maior n concluído foi {last['n']}, "
                      f"com {number(last['partition_candidates'])} candidatos enumerados.")
+    constrained=[r for r in rows if r["serie"]=="K=3" and r["status"]=="optimal"]
+    if constrained:
+        last=constrained[-1]
+        observed=int(last["partition_candidates"])
+        upper=3**last["n"]-1
+        lines.append(f"Na série K=3 (Q=ceil(n/3)), a maior instância concluída foi n={last['n']}, "
+                     f"com três rotas e {number(observed)} candidatos ({100*observed/upper:.1f}% da cota sem poda).")
     if any(r["status"]!="optimal" for r in rows):
         lines.append("Execuções censuradas por timeout ou erro não foram tratadas como soluções.")
     lines.extend((
         "",
         "## 5. Limitações e conclusão",
         "",
-        "Os custos são artificiais e as duas séries usam apenas K=1 ou K=2.",
+        "Os custos são artificiais; K=1 e K=2 isolam o pior caso, e K=3 força rotas múltiplas.",
         "Não é correto extrapolar os tempos diretamente para operações reais com pedidos variáveis,",
         "janelas de tempo ou demandas estocásticas.",
         "Os resultados mostram o crescimento de estados 2^n e candidatos 3^n no modelo exato,",
@@ -296,8 +304,8 @@ def main():
          [("máscaras",[(r["n"],r["masks"]) for r in rows if r["k"]==1]),
           ("estados HK",[(r["n"],r["hk_states"] or None) for r in rows if r["k"]==1]),
           ("slots HK",[(r["n"],r["hk_slots"]) for r in rows if r["k"]==1])]),
-        ("candidatos.svg","Candidatos de partição","Enumeração real na série K=2","contagem",
-         [("K=2",[(r["n"],r["partition_candidates"] or None) for r in rows if r["k"]==2])]),
+        ("candidatos.svg","Candidatos de partição","K=2 sem poda e K=3 com capacidade restrita","contagem",
+         [(f"K={k}",[(r["n"],r["partition_candidates"] or None) for r in rows if r["k"]==k]) for k in (2,3)]),
     ):
         svg_chart(out/name,title,subtitle,series,unit)
     report(rows,ROOT/"requisitos"/"experimentos.md",args.timeout,args.seed)
