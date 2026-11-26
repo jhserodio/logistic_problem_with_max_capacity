@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 450" role="img" aria-label="Pico de RSS por tamanho">
+<rect width="940" height="450" rx="12" fill="#111a28"/>
+<text x="35" y="36" font-size="21" font-family="sans-serif" font-weight="bold" fill="#f3f7fc">Pico de RSS por tamanho</text>
+<text x="35" y="60" font-size="13" font-family="sans-serif" fill="#b6c7de">Máximo por processo; inclui perfilamento</text>
+<path d="M 100 367.00 H 840" stroke="#38485b" stroke-dasharray="4 5"/>
+<text x="88" y="371.00" font-size="12" font-family="sans-serif" text-anchor="end" fill="#b6c7de">10^0.0</text>
+<path d="M 100 310.00 H 840" stroke="#38485b" stroke-dasharray="4 5"/>
+<text x="88" y="314.00" font-size="12" font-family="sans-serif" text-anchor="end" fill="#b6c7de">10^0.6</text>
+<path d="M 100 253.00 H 840" stroke="#38485b" stroke-dasharray="4 5"/>
+<text x="88" y="257.00" font-size="12" font-family="sans-serif" text-anchor="end" fill="#b6c7de">10^1.2</text>
+<path d="M 100 196.00 H 840" stroke="#38485b" stroke-dasharray="4 5"/>
+<text x="88" y="200.00" font-size="12" font-family="sans-serif" text-anchor="end" fill="#b6c7de">10^1.8</text>
+<path d="M 100 139.00 H 840" stroke="#38485b" stroke-dasharray="4 5"/>
+<text x="88" y="143.00" font-size="12" font-family="sans-serif" text-anchor="end" fill="#b6c7de">10^2.4</text>
+<path d="M 100 82.00 H 840" stroke="#38485b" stroke-dasharray="4 5"/>
+<text x="88" y="86.00" font-size="12" font-family="sans-serif" text-anchor="end" fill="#b6c7de">10^3.0</text>
+<text x="100.0" y="392" font-family="sans-serif" font-size="13" text-anchor="middle" fill="#b6c7de">8</text>
+<text x="223.3" y="392" font-family="sans-serif" font-size="13" text-anchor="middle" fill="#b6c7de">10</text>
+<text x="346.7" y="392" font-family="sans-serif" font-size="13" text-anchor="middle" fill="#b6c7de">12</text>
+<text x="470.0" y="392" font-family="sans-serif" font-size="13" text-anchor="middle" fill="#b6c7de">14</text>
+<text x="593.3" y="392" font-family="sans-serif" font-size="13" text-anchor="middle" fill="#b6c7de">16</text>
+<text x="716.7" y="392" font-family="sans-serif" font-size="13" text-anchor="middle" fill="#b6c7de">18</text>
+<text x="840.0" y="392" font-family="sans-serif" font-size="13" text-anchor="middle" fill="#b6c7de">20</text>
+<text x="100" y="72" font-size="13" font-family="sans-serif" fill="#b6c7de">MiB (escala log10)</text>
+<text x="470.0" y="419" font-size="13" font-family="sans-serif" text-anchor="middle" fill="#b6c7de">Clientes (n)</text>
+<polyline points="100.0,333.0 223.3,331.0 346.7,322.4 470.0,301.1 593.3,257.5 716.7,202.5 840.0,143.1" fill="none" stroke="#75b6fb" stroke-width="2.5"/>
+<circle cx="100.0" cy="333.0" r="4" fill="#75b6fb"/>
+<circle cx="223.3" cy="331.0" r="4" fill="#75b6fb"/>
+<circle cx="346.7" cy="322.4" r="4" fill="#75b6fb"/>
+<circle cx="470.0" cy="301.1" r="4" fill="#75b6fb"/>
+<circle cx="593.3" cy="257.5" r="4" fill="#75b6fb"/>
+<circle cx="716.7" cy="202.5" r="4" fill="#75b6fb"/>
+<circle cx="840.0" cy="143.1" r="4" fill="#75b6fb"/>
+<path d="M 100 417 h 15" stroke="#75b6fb" stroke-width="3"/>
+<text x="121" y="422" fill="#dce5f4" font-size="13" font-family="sans-serif">K=1</text>
+<polyline points="100.0,333.7 223.3,330.9 346.7,321.4 470.0,298.3 593.3,253.9 716.7,198.8 840.0,139.6" fill="none" stroke="#f5ae6c" stroke-width="2.5"/>
+<circle cx="100.0" cy="333.7" r="4" fill="#f5ae6c"/>
+<circle cx="223.3" cy="330.9" r="4" fill="#f5ae6c"/>
+<circle cx="346.7" cy="321.4" r="4" fill="#f5ae6c"/>
+<circle cx="470.0" cy="298.3" r="4" fill="#f5ae6c"/>
+<circle cx="593.3" cy="253.9" r="4" fill="#f5ae6c"/>
+<circle cx="716.7" cy="198.8" r="4" fill="#f5ae6c"/>
+<circle cx="840.0" cy="139.6" r="4" fill="#f5ae6c"/>
+<path d="M 315 417 h 15" stroke="#f5ae6c" stroke-width="3"/>
+<text x="336" y="422" fill="#dce5f4" font-size="13" font-family="sans-serif">K=2</text>
+</svg>
