@@ -15,9 +15,9 @@ O problema é o **Capacitated Vehicle Routing Problem (CVRP)** determinístico, 
 
 Como não é útil utilizar mais veículos do que clientes (cada rota atende pelo menos um), a implementação adota:
 
-~~~math
+```math
 K_{\mathrm{ef}}=\min(K,n).
-~~~
+```
 
 **Importante:** a Parte A descreve também uma formulação MILP, mas o código executável do projeto **não resolve esse MILP**. A análise a seguir corresponde às **duas programações dinâmicas exatas por subconjuntos** da Parte B, com a restrição \`L\` da Parte C.
 
@@ -25,9 +25,9 @@ K_{\mathrm{ef}}=\min(K,n).
 
 Cada conjunto de clientes é representado por uma máscara de bits (*bitmask*) de \`n\` posições. Cada bit indica se o cliente pertence ao conjunto. Assim, para cada cliente existem duas possibilidades independentes: pertencer ou não ao subconjunto.
 
-~~~math
+```math
 \boxed{\lvert\mathcal P(C)\rvert=2^n}
-~~~
+```
 
 Exemplos:
 
@@ -43,65 +43,65 @@ Exemplos:
 
 Ao acrescentar **um cliente**, o número de subconjuntos **dobra**:
 
-~~~math
+```math
 2^{n+1}=2\cdot 2^n.
-~~~
+```
 
 Isso aumenta diretamente o comprimento dos vetores indexados por máscara, como \`demand\`, \`route_cost\` e \`route_end\`, independentemente de haver ou não uma rota viável para cada conjunto.
 
 As demandas dos subconjuntos são obtidas por uma recorrência que retira o bit menos significativo:
 
-~~~math
+```math
 A(T)=A(T\setminus\{j\})+d_j.
-~~~
+```
 
 Cada máscara utiliza tempo constante para consultar uma soma já calculada:
 
-~~~math
+```math
 T_A(n)=O(2^n),\qquad M_A(n)=O(2^n).
-~~~
+```
 
 ## 3. Primeira programação dinâmica: Held–Karp
 
 Para um subconjunto não vazio \`T\` e um cliente \`j ∈ T\`, o estado é:
 
-~~~math
+```math
 H(T,j)=\text{menor distância de }0\text{ até }j
 \text{ visitando exatamente os clientes de }T.
-~~~
+```
 
 A recorrência é:
 
-~~~math
+```math
 H(T,j)=\min_{i\in T\setminus\{j\}}
 \left(H(T\setminus\{j\},i)+c_{ij}\right).
-~~~
+```
 
 O custo da rota fechada associada a \`T\` é:
 
-~~~math
+```math
 D(T)=\min_{j\in T}\left(H(T,j)+c_{j0}\right).
-~~~
+```
 
 Uma rota é admissível se atender **ambas** as restrições:
 
-~~~math
+```math
 A(T)\le Q,\qquad D(T)\le L.
-~~~
+```
 
 ### 3.1 Quantidade de estados
 
 Existem \`2^n\` máscaras e \`n\` possíveis clientes finais. O vetor Rust \`h\`, portanto, reserva:
 
-~~~math
+```math
 \boxed{n2^n\text{ posições alocadas.}}
-~~~
+```
 
 Contudo, \`H(T,j)\` só é matematicamente definido quando \`j ∈ T\`. Fixado \`j\`, existem \`2^{n-1}\` conjuntos que o contêm. Logo, o número de **estados potencialmente válidos** é:
 
-~~~math
+```math
 \boxed{\sum_{T\subseteq C}|T|=n2^{n-1}.}
-~~~
+```
 
 A implementação usa uma tabela retangular \`2^n × n\` para indexação direta e mantém posições não utilizadas, além de posições descartadas pelas restrições.
 
@@ -109,24 +109,24 @@ A implementação usa uma tabela retangular \`2^n × n\` para indexação direta
 
 Um estado \`H(T,j)\` considera até \`|T|-1\` predecessores. A contagem de transições da recorrência no caso sem podas é:
 
-~~~math
+```math
 \sum_{T\subseteq C}|T|(|T|-1)
 =n(n-1)2^{n-2}.
-~~~
+```
 
 Somam-se \`O(n2^n)\` verificações para fechar rotas e calcular \`D(T)\`. Portanto:
 
-~~~math
+```math
 \boxed{T_{\mathrm{HK}}(n)=O(n^2 2^n).}
-~~~
+```
 
 ### 3.3 Complexidade espacial
 
 A implementação guarda \`h\` (custos) e \`predecessor\` (reconstrução da ordem), cada qual com \`n2^n\` entradas. Portanto:
 
-~~~math
+```math
 \boxed{M_{\mathrm{HK}}(n)=O(n2^n).}
-~~~
+```
 
 A capacidade \`Q\` e o limite \`L\` **não criam dimensões adicionais** na tabela. Eles são utilizados em verificações de viabilidade, com podas quando possíveis.
 
@@ -134,19 +134,19 @@ A capacidade \`Q\` e o limite \`L\` **não criam dimensões adicionais** na tabe
 
 Seja:
 
-~~~math
+```math
 G(S,k)=\text{menor distância para atender }S
 \text{ utilizando no máximo }k\text{ rotas.}
-~~~
+```
 
 Com um cliente âncora fixo \`a(S) ∈ S\`, a recorrência da Parte B é:
 
-~~~math
+```math
 G(S,k)=
 \min_{\substack{T\subseteq S,\;a(S)\in T\\
 A(T)\le Q,\;D(T)\le L}}
 \left(D(T)+G(S\setminus T,k-1)\right).
-~~~
+```
 
 O cliente âncora evita enumerar a mesma partição em diferentes ordens. A solução global é \`G(C,K_ef)\`.
 
@@ -154,9 +154,9 @@ O cliente âncora evita enumerar a mesma partição em diferentes ordens. A solu
 
 Para cada camada de veículos \`k\`, existem até \`2^n\` máscaras. Com \`K_ef\` camadas:
 
-~~~math
+```math
 \boxed{O(K_{\mathrm{ef}}2^n)\text{ estados de partição.}}
-~~~
+```
 
 O código mantém apenas **duas camadas de custos** (\`previous\` e \`current\`), mas guarda as escolhas de reconstrução de todas as camadas (\`choices\`). Por isso, o armazenamento da segunda PD continua sendo \`O(K_ef 2^n)\`.
 
@@ -164,27 +164,27 @@ O código mantém apenas **duas camadas de custos** (\`previous\` e \`current\`)
 
 Para cada conjunto não vazio \`S\`, o subconjunto escolhido \`T\` deve conter o cliente âncora. Os demais \`|S|-1\` clientes podem ou não integrar \`T\`. Logo:
 
-~~~math
+```math
 \text{candidatos}(S)=2^{|S|-1}.
-~~~
+```
 
 Somando sobre os conjuntos de todos os tamanhos:
 
-~~~math
+```math
 \begin{aligned}
 \sum_{\varnothing\ne S\subseteq C}2^{|S|-1}
 &=\sum_{s=1}^{n}\binom ns 2^{s-1}\\
 &=\frac12\left(\sum_{s=0}^{n}\binom ns 2^s-1\right)\\
 &=\boxed{\frac{3^n-1}{2}}.
 \end{aligned}
-~~~
+```
 
 Portanto, no pior caso, a quantidade de candidatos examinados **por camada adicional de veículos** é proporcional a \`3^n\`. O laço implementado em Rust vai de \`k=2\` até \`K_ef\`, de modo que há até \`K_ef-1\` camadas adicionais, além da inicialização de uma rota.
 
-~~~math
+```math
 \boxed{T_{\mathrm{partição}}(n,K_{\mathrm{ef}})
 =O(K_{\mathrm{ef}}3^n).}
-~~~
+```
 
 Para \`K_ef=1\`, a segunda etapa não executa esse laço e utiliza diretamente os custos das rotas pré-computadas.
 
@@ -192,10 +192,10 @@ Para \`K_ef=1\`, a segunda etapa não executa esse laço e utiliza diretamente o
 
 O vetor \`choices\` armazena \`(K_ef+1)2^n\` valores \`u32\`, enquanto os vetores \`previous\` e \`current\` guardam \`2^n\` valores \`u128\` cada um. A reconstrução das rotas adiciona apenas estruturas lineares no número de clientes.
 
-~~~math
+```math
 \boxed{M_{\mathrm{partição}}(n,K_{\mathrm{ef}})
 =O(K_{\mathrm{ef}}2^n).}
-~~~
+```
 
 ## 5. Complexidade global
 
@@ -203,21 +203,21 @@ Combinando o cálculo das demandas, Held–Karp, a partição e a reconstrução
 
 **Complexidade de tempo:**
 
-~~~math
+```math
 \boxed{T(n,K)=O(n^2 2^n+K_{\mathrm{ef}}3^n).}
-~~~
+```
 
 **Complexidade de memória auxiliar:**
 
-~~~math
+```math
 \boxed{M(n,K)=O((n+K_{\mathrm{ef}})2^n).}
-~~~
+```
 
 A matriz de entrada possui \`(n+1)^2\` custos, exigindo \`O(n^2)\` memória adicional para armazená-la. Incluindo a entrada:
 
-~~~math
+```math
 M_{\mathrm{total}}(n,K)=O((n+K_{\mathrm{ef}})2^n+n^2).
-~~~
+```
 
 As podas por capacidade e distância máxima reduzem o **trabalho efetivo** em várias instâncias, mas não eliminam o pior caso exponencial. Os valores numéricos de \`Q\` e \`L\` não multiplicam a dimensão dos estados, diferentemente de uma PD que indexasse diretamente carga ou distância acumulada.
 
@@ -240,13 +240,13 @@ Seja \`N=2^n\`. Na plataforma Rust usual de 64 bits:
 
 Somando os elementos dessas tabelas durante uma camada com dois vetores de custos vivos:
 
-~~~math
+```math
 \begin{aligned}
 M_{\mathrm{vetores}}
 &=\left[16+8+1+8n+n+4(K_{\mathrm{ef}}+1)+16+16\right]2^n\\
 &=\boxed{\left[57+9n+4(K_{\mathrm{ef}}+1)\right]2^n\;\text{bytes}.}
 \end{aligned}
-~~~
+```
 
 **Observações de interpretação:**
 
@@ -295,14 +295,14 @@ A representação por subconjuntos oferece uma decomposição exata: Held–Karp
 
 O custo dessa exatidão é **exponencial**:
 
-~~~math
+```math
 \boxed{
 \begin{array}{l}
 \text{Tempo: }O(n^2 2^n+K_{\mathrm{ef}}3^n)\\[3pt]
 \text{Memória: }O((n+K_{\mathrm{ef}})2^n)
 \end{array}
 }
-~~~
+```
 
 O crescimento associado a \`2^n\` torna as tabelas rapidamente maiores, enquanto as transições associadas a \`3^n\` tornam o tempo de execução ainda mais restritivo. Portanto, a abordagem é apropriada para **instâncias pequenas ou moderadas e para obter ótimos de referência**, mas não é uma solução diretamente escalável para grandes redes logísticas. Instâncias com muitos clientes exigirão o estudo de heurísticas, aproximações ou outras estratégias de otimização, sem perder a distinção entre **ótimo comprovado** e **solução aproximada**.
 
