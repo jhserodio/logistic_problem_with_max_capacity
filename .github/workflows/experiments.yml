@@ -7,6 +7,8 @@ on:
       - "src/lib.rs"
       - "src/bin/experiment.rs"
       - "scripts/parte_f.py"
+      - "scripts/localize_results.py"
+      - "scripts/validate_research.py"
       - ".github/workflows/experiments.yml"
 permissions:
   contents: write
@@ -26,20 +28,24 @@ jobs:
         run: cargo build --release --bin experiment
       - name: Medir e gerar CSV e graficos SVG
         run: python3 scripts/parte_f.py --timeout 55 --seed 7
+      - name: Sincronizar documentos em ingles
+        run: python3 scripts/localize_results.py
+      - name: Validar links e arquivos bilingues
+        run: python3 scripts/validate_research.py
       - name: Arquivar relatorio e dados
         uses: actions/upload-artifact@v4
         with:
           name: cvrp-parte-f
           path: |
-            requisitos/experimentos.md
-            requisitos/resultados-f/
+            research/ptBr/
+            research/enUs/
       - name: Publicar resumo
-        run: cat requisitos/experimentos.md >> "$GITHUB_STEP_SUMMARY"
+        run: cat research/ptBr/experimentos.md >> "$GITHUB_STEP_SUMMARY"
       - name: Publicar os resultados medidos no repositorio
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add requisitos/experimentos.md requisitos/resultados-f/
+          git add research/ptBr/experimentos.md research/ptBr/results/ research/ptBr/img/ research/enUs/experiments.md research/enUs/results/ research/enUs/img/
           if git diff --cached --quiet; then
             echo "Sem alteracoes."
           else

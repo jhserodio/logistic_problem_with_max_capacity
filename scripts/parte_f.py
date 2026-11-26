@@ -213,18 +213,18 @@ def report(rows, output, timeout, seed):
         )
     lines.extend((
         "",
-        "O [CSV com contadores e medições](./resultados-f/dados.csv) inclui repetições,",
+        "O [CSV com contadores e medições](./results/dados.csv) inclui repetições,",
         "posições alocadas, transições Held–Karp e estados/candidatos da partição.",
         "",
         "## 3. Gráficos",
         "",
-        "![Tempo por número de clientes](./resultados-f/tempo.svg)",
+        "![Tempo por número de clientes](./img/tempo.svg)",
         "",
-        "![Memória por número de clientes](./resultados-f/memoria.svg)",
+        "![Memória por número de clientes](./img/memoria.svg)",
         "",
-        "![Estados e posições Held–Karp](./resultados-f/estados.svg)",
+        "![Estados e posições Held–Karp](./img/estados.svg)",
         "",
-        "![Subconjuntos candidatos na partição](./resultados-f/candidatos.svg)",
+        "![Subconjuntos candidatos na partição](./img/candidatos.svg)",
         "",
         "Os gráficos usam eixo vertical logarítmico. Séries interrompidas não recebem valores artificiais.",
         "",
@@ -288,7 +288,9 @@ def main():
     ap.add_argument("--timeout",type=int,default=55)
     ap.add_argument("--seed",type=int,default=7)
     args=ap.parse_args()
-    out=ROOT/"requisitos"/"resultados-f"
+    out=ROOT/"research"/"ptBr"/"results"
+    img=ROOT/"research"/"ptBr"/"img"
+    img.mkdir(parents=True,exist_ok=True)
     out.mkdir(parents=True,exist_ok=True)
     rows=collect(args.timeout,args.seed)
     with (out/"dados.csv").open("w",encoding="utf-8",newline="") as f:
@@ -307,8 +309,8 @@ def main():
         ("candidatos.svg","Candidatos de partição","K=2 sem poda e K=3 com capacidade restrita","contagem",
          [(f"K={k}",[(r["n"],r["partition_candidates"] or None) for r in rows if r["k"]==k]) for k in (2,3)]),
     ):
-        svg_chart(out/name,title,subtitle,series,unit)
-    report(rows,ROOT/"requisitos"/"experimentos.md",args.timeout,args.seed)
+        svg_chart(img/name,title,subtitle,series,unit)
+    report(rows,ROOT/"research"/"ptBr"/"experimentos.md",args.timeout,args.seed)
     failures=sum(r["status"]=="error" for r in rows)
     print("PARTE_F_COMPLETED "+json.dumps({"cases":len(rows),"optimal":sum(r["status"]=="optimal" for r in rows),
         "timeout":sum(r["status"]=="timeout" for r in rows),"errors":failures}),flush=True)
