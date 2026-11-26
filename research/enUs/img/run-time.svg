@@ -1,7 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 450" role="img" aria-label="Tempo de execução por tamanho">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 450" role="img" aria-label="Solver runtime by instance size">
 <rect width="940" height="450" rx="12" fill="#111a28"/>
-<text x="35" y="36" font-size="21" font-family="sans-serif" font-weight="bold" fill="#f3f7fc">Tempo de execução por tamanho</text>
-<text x="35" y="60" font-size="13" font-family="sans-serif" fill="#b6c7de">Mediana nativa não instrumentada</text>
+<text x="35" y="36" font-size="21" font-family="sans-serif" font-weight="bold" fill="#f3f7fc">Solver runtime by instance size</text>
+<text x="35" y="60" font-size="13" font-family="sans-serif" fill="#b6c7de">Median of unprofiled native solve()</text>
 <path d="M 100 367.00 H 840" stroke="#38485b" stroke-dasharray="4 5"/>
 <text x="88" y="371.00" font-size="12" font-family="sans-serif" text-anchor="end" fill="#b6c7de">10^-2.0</text>
 <path d="M 100 310.00 H 840" stroke="#38485b" stroke-dasharray="4 5"/>
@@ -21,36 +21,36 @@
 <text x="593.3" y="392" font-family="sans-serif" font-size="13" text-anchor="middle" fill="#b6c7de">16</text>
 <text x="716.7" y="392" font-family="sans-serif" font-size="13" text-anchor="middle" fill="#b6c7de">18</text>
 <text x="840.0" y="392" font-family="sans-serif" font-size="13" text-anchor="middle" fill="#b6c7de">20</text>
-<text x="100" y="72" font-size="13" font-family="sans-serif" fill="#b6c7de">ms (escala log10)</text>
-<text x="470.0" y="419" font-size="13" font-family="sans-serif" text-anchor="middle" fill="#b6c7de">Clientes (n)</text>
-<polyline points="100.0,339.5 223.3,307.7 346.7,272.3 470.0,239.5 593.3,207.0 716.7,175.0 840.0,143.3" fill="none" stroke="#75b6fb" stroke-width="2.5"/>
-<circle cx="100.0" cy="339.5" r="4" fill="#75b6fb"/>
-<circle cx="223.3" cy="307.7" r="4" fill="#75b6fb"/>
-<circle cx="346.7" cy="272.3" r="4" fill="#75b6fb"/>
-<circle cx="470.0" cy="239.5" r="4" fill="#75b6fb"/>
-<circle cx="593.3" cy="207.0" r="4" fill="#75b6fb"/>
+<text x="100" y="72" font-size="13" font-family="sans-serif" fill="#b6c7de">ms (log10 scale)</text>
+<text x="470.0" y="419" font-size="13" font-family="sans-serif" text-anchor="middle" fill="#b6c7de">Customers (n)</text>
+<polyline points="100.0,340.9 223.3,307.2 346.7,272.2 470.0,239.6 593.3,206.9 716.7,175.0 840.0,143.4" fill="none" stroke="#75b6fb" stroke-width="2.5"/>
+<circle cx="100.0" cy="340.9" r="4" fill="#75b6fb"/>
+<circle cx="223.3" cy="307.2" r="4" fill="#75b6fb"/>
+<circle cx="346.7" cy="272.2" r="4" fill="#75b6fb"/>
+<circle cx="470.0" cy="239.6" r="4" fill="#75b6fb"/>
+<circle cx="593.3" cy="206.9" r="4" fill="#75b6fb"/>
 <circle cx="716.7" cy="175.0" r="4" fill="#75b6fb"/>
-<circle cx="840.0" cy="143.3" r="4" fill="#75b6fb"/>
+<circle cx="840.0" cy="143.4" r="4" fill="#75b6fb"/>
 <path d="M 100 417 h 15" stroke="#75b6fb" stroke-width="3"/>
 <text x="121" y="422" fill="#dce5f4" font-size="13" font-family="sans-serif">K=1</text>
-<polyline points="100.0,336.1 223.3,300.1 346.7,263.9 470.0,226.0 593.3,185.9 716.7,142.6 840.0,91.3" fill="none" stroke="#f5ae6c" stroke-width="2.5"/>
-<circle cx="100.0" cy="336.1" r="4" fill="#f5ae6c"/>
-<circle cx="223.3" cy="300.1" r="4" fill="#f5ae6c"/>
-<circle cx="346.7" cy="263.9" r="4" fill="#f5ae6c"/>
-<circle cx="470.0" cy="226.0" r="4" fill="#f5ae6c"/>
-<circle cx="593.3" cy="185.9" r="4" fill="#f5ae6c"/>
-<circle cx="716.7" cy="142.6" r="4" fill="#f5ae6c"/>
-<circle cx="840.0" cy="91.3" r="4" fill="#f5ae6c"/>
+<polyline points="100.0,337.1 223.3,300.5 346.7,264.3 470.0,226.2 593.3,186.1 716.7,140.2 840.0,89.8" fill="none" stroke="#f5ae6c" stroke-width="2.5"/>
+<circle cx="100.0" cy="337.1" r="4" fill="#f5ae6c"/>
+<circle cx="223.3" cy="300.5" r="4" fill="#f5ae6c"/>
+<circle cx="346.7" cy="264.3" r="4" fill="#f5ae6c"/>
+<circle cx="470.0" cy="226.2" r="4" fill="#f5ae6c"/>
+<circle cx="593.3" cy="186.1" r="4" fill="#f5ae6c"/>
+<circle cx="716.7" cy="140.2" r="4" fill="#f5ae6c"/>
+<circle cx="840.0" cy="89.8" r="4" fill="#f5ae6c"/>
 <path d="M 315 417 h 15" stroke="#f5ae6c" stroke-width="3"/>
 <text x="336" y="422" fill="#dce5f4" font-size="13" font-family="sans-serif">K=2</text>
-<polyline points="100.0,338.7 223.3,304.1 346.7,270.9 470.0,227.9 593.3,182.8 716.7,143.0 840.0,88.3" fill="none" stroke="#80d1b0" stroke-width="2.5"/>
-<circle cx="100.0" cy="338.7" r="4" fill="#80d1b0"/>
-<circle cx="223.3" cy="304.1" r="4" fill="#80d1b0"/>
-<circle cx="346.7" cy="270.9" r="4" fill="#80d1b0"/>
+<polyline points="100.0,340.0 223.3,304.5 346.7,270.7 470.0,227.9 593.3,183.0 716.7,143.0 840.0,87.4" fill="none" stroke="#80d1b0" stroke-width="2.5"/>
+<circle cx="100.0" cy="340.0" r="4" fill="#80d1b0"/>
+<circle cx="223.3" cy="304.5" r="4" fill="#80d1b0"/>
+<circle cx="346.7" cy="270.7" r="4" fill="#80d1b0"/>
 <circle cx="470.0" cy="227.9" r="4" fill="#80d1b0"/>
-<circle cx="593.3" cy="182.8" r="4" fill="#80d1b0"/>
+<circle cx="593.3" cy="183.0" r="4" fill="#80d1b0"/>
 <circle cx="716.7" cy="143.0" r="4" fill="#80d1b0"/>
-<circle cx="840.0" cy="88.3" r="4" fill="#80d1b0"/>
+<circle cx="840.0" cy="87.4" r="4" fill="#80d1b0"/>
 <path d="M 530 417 h 15" stroke="#80d1b0" stroke-width="3"/>
 <text x="551" y="422" fill="#dce5f4" font-size="13" font-family="sans-serif">K=3</text>
 </svg>
