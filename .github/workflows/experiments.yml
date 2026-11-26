@@ -50,5 +50,6 @@ jobs:
             echo "Sem alteracoes."
           else
             git commit -m "docs: resultados medidos da Parte F [skip ci]"
+            git pull --rebase origin master
             git push origin HEAD:master
           fi

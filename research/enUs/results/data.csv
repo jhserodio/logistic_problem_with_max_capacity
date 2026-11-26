@@ -1,4 +1,4 @@
-serie,n,k,q,l,seed,status,reps,tempo_ms,rss_kib,masks,hk_slots,hk_states,hk_transitions,feasible_subsets,choices_slots,partition_states,partition_candidates,cost,routes,served,note
+series,n,k,q,l,seed,status,repetitions,time_ms,peak_rss_kib,subsets,held_karp_allocated_slots,held_karp_evaluated_states,held_karp_transitions,feasible_route_subsets,partition_allocated_slots,partition_evaluated_states,partition_candidates,optimal_cost,routes,customers_served,notes
 K=1,8,1,8,1000000,7,optimal,3,0.0379,2376,256,2048,1024,3584,255,512,0,0,44,1,8,
 K=1,10,1,10,1000000,7,optimal,3,0.1769,2464,1024,10240,5120,23040,1023,2048,0,0,48,1,10,
 K=1,12,1,12,1000000,7,optimal,3,0.987,3000,4096,49152,24576,135168,4095,8192,0,0,55,1,12,
