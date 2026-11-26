@@ -307,3 +307,5 @@ O custo dessa exatidão é **exponencial**:
 O crescimento associado a \`2^n\` torna as tabelas rapidamente maiores, enquanto as transições associadas a \`3^n\` tornam o tempo de execução ainda mais restritivo. Portanto, a abordagem é apropriada para **instâncias pequenas ou moderadas e para obter ótimos de referência**, mas não é uma solução diretamente escalável para grandes redes logísticas. Instâncias com muitos clientes exigirão o estudo de heurísticas, aproximações ou outras estratégias de otimização, sem perder a distinção entre **ótimo comprovado** e **solução aproximada**.
 
 **Base da análise:** [implementação Rust](../src/lib.rs), [Parte B](./formulacao.md), [Parte C](./extensao.md) e [exemplo JSON](../examples/instance.json).
+
+**Verificação experimental:** [Parte F — Experimentos computacionais](./experimentos.md) confronta as contagens de estados e transições com tempo real e pico de memória, apresentando tabelas e gráficos gerados em GitHub Actions.

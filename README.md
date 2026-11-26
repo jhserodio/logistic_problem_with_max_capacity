@@ -50,6 +50,18 @@ A [instância de seis clientes](examples/instance.json) corresponde às demandas
 
 **Parte E — Análise formal:** [Complexidade do algoritmo](requisitos/complexidade.md), com contagem dos estados, transições e consumo estimado de memória.
 
+**Parte F — Experimentos computacionais:** [relatório com tabelas, gráficos e discussão](requisitos/experimentos.md). Os [dados CSV](requisitos/resultados-f/dados.csv) e quatro gráficos SVG permitem conferir os resultados. A metodologia e as ferramentas de reprodução estão em `src/bin/experiment.rs` e `scripts/parte_f.py`.
+
+Para reproduzir em ambiente Linux com Rust, Python 3 e `/usr/bin/time`:
+
+```bash
+cargo test --all-targets
+cargo build --release --bin experiment
+python3 scripts/parte_f.py --timeout 55 --seed 7
+```
+
+Os experimentos podem ser executados automaticamente pelo [GitHub Actions](.github/workflows/experiments.yml), que publica o relatório e guarda os artefatos.
+
 **Complexidade de pior caso:** tempo O(n² 2^n + K 3^n); memória O((n+K) 2^n), desconsiderando a matriz de distâncias. A implementação limita n a 20 clientes; mesmo nesse limite o custo de tempo e memória pode ser alto. Execute benchmarks em modo release.
 
 Esta solução é ótima para os dados fornecidos quando o custo a minimizar é a própria distância. Ela retorna inviabilidade quando as restrições não podem ser atendidas. O algoritmo exato e seus testes estão em `src/lib.rs`; `src/main.rs` contém a interface CLI para executar as instâncias JSON. Não há exigência de reutilizar código no estudo estocástico futuro.

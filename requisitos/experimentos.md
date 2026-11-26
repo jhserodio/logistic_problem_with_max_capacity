@@ -9,7 +9,7 @@ Foram considerados n em (8, 10, 12, 14, 16, 18, 20), nas séries K=1, K=2 e K=3,
 Uma matriz dirigida determinística fornece distâncias inteiras positivas de 1 a 29;
 a fórmula e a semente encontram-se em src/bin/experiment.rs.
 K=1 e K=2 não sofrem podas; K=3 usa Q=ceil(n/3), forçando três rotas e podas por capacidade.
-útil para observar o pior crescimento combinatório, não uma simulação geográfica real.
+As séries densas isolam o crescimento combinatório, mas não representam distâncias geográficas reais.
 Tempo: mediana do método solve() sem instrumentação, medido pelo Rust Instant;
 3 repetições até n=14, 2 em n=16 e 1 em n=18/20.
 Contadores: segunda passagem independente por solve_with_metrics(), excluída do tempo informado.
