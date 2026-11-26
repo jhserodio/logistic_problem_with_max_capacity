@@ -12,7 +12,7 @@ fn arg_value(args: &[String], key: &str, default: u64) -> Result<u64, String> {
         .unwrap_or(Ok(default))
 }
 
-fn create_instance(n: usize, k: usize, seed: u64) -> Instance {
+fn create_instance(n: usize, k: usize, q: usize, seed: u64) -> Instance {
     // Uma família de instâncias aninhadas: para quaisquer n1<n2,
     // as distâncias nos clientes 0..n1 são idênticas.
     // As distâncias não precisam obedecer à desigualdade triangular.
@@ -28,7 +28,7 @@ fn create_instance(n: usize, k: usize, seed: u64) -> Instance {
     Instance {
         demands: vec![1; n],
         distances,
-        vehicle_capacity: n as u64,
+        vehicle_capacity: q as u64,
         max_vehicles: k,
         max_route_distance: 1_000_000,
     }
@@ -36,17 +36,18 @@ fn create_instance(n: usize, k: usize, seed: u64) -> Instance {
 
 fn run() -> Result<(), String> {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    if args.iter().any(|arg| !["--n=", "--k=", "--seed="]
+    if args.iter().any(|arg| !["--n=", "--k=", "--q=", "--seed="]
         .iter().any(|prefix| arg.starts_with(prefix))) {
-        return Err("uso: experiment --n=8 --k=1 --seed=7".into());
+        return Err("uso: experiment --n=8 --k=3 --q=3 --seed=7".into());
     }
     let n = arg_value(&args, "n", 8)? as usize;
     let k = arg_value(&args, "k", 1)? as usize;
+    let q = arg_value(&args, "q", n as u64)? as usize;
     let seed = arg_value(&args, "seed", 7)?;
-    if !(1..=20).contains(&n) || k == 0 || k > n || seed > 1000 {
-        return Err("1 <= n <= 20, 1 <= k <= n e seed <= 1000".into());
+    if !(1..=20).contains(&n) || k == 0 || k > n || q == 0 || q > n || seed > 1000 {
+        return Err("1 <= n <= 20, 1 <= k <= n, 1 <= q <= n e seed <= 1000".into());
     }
-    let instance = create_instance(n, k, seed);
+    let instance = create_instance(n, k, q, seed);
 
     // Primeiro mede o contrato principal sem overhead dos contadores.
     let started = Instant::now();
