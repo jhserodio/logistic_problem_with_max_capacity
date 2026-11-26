@@ -23,24 +23,34 @@
 <text x="840.0" y="392" font-family="sans-serif" font-size="13" text-anchor="middle" fill="#b6c7de">20</text>
 <text x="100" y="72" font-size="13" font-family="sans-serif" fill="#b6c7de">MiB (escala log10)</text>
 <text x="470.0" y="419" font-size="13" font-family="sans-serif" text-anchor="middle" fill="#b6c7de">Clientes (n)</text>
-<polyline points="100.0,333.0 223.3,331.0 346.7,322.4 470.0,301.1 593.3,257.5 716.7,202.5 840.0,143.1" fill="none" stroke="#75b6fb" stroke-width="2.5"/>
-<circle cx="100.0" cy="333.0" r="4" fill="#75b6fb"/>
-<circle cx="223.3" cy="331.0" r="4" fill="#75b6fb"/>
-<circle cx="346.7" cy="322.4" r="4" fill="#75b6fb"/>
-<circle cx="470.0" cy="301.1" r="4" fill="#75b6fb"/>
+<polyline points="100.0,332.5 223.3,331.2 346.7,322.7 470.0,300.8 593.3,257.5 716.7,202.4 840.0,143.1" fill="none" stroke="#75b6fb" stroke-width="2.5"/>
+<circle cx="100.0" cy="332.5" r="4" fill="#75b6fb"/>
+<circle cx="223.3" cy="331.2" r="4" fill="#75b6fb"/>
+<circle cx="346.7" cy="322.7" r="4" fill="#75b6fb"/>
+<circle cx="470.0" cy="300.8" r="4" fill="#75b6fb"/>
 <circle cx="593.3" cy="257.5" r="4" fill="#75b6fb"/>
-<circle cx="716.7" cy="202.5" r="4" fill="#75b6fb"/>
+<circle cx="716.7" cy="202.4" r="4" fill="#75b6fb"/>
 <circle cx="840.0" cy="143.1" r="4" fill="#75b6fb"/>
 <path d="M 100 417 h 15" stroke="#75b6fb" stroke-width="3"/>
 <text x="121" y="422" fill="#dce5f4" font-size="13" font-family="sans-serif">K=1</text>
-<polyline points="100.0,333.7 223.3,330.9 346.7,321.4 470.0,298.3 593.3,253.9 716.7,198.8 840.0,139.6" fill="none" stroke="#f5ae6c" stroke-width="2.5"/>
-<circle cx="100.0" cy="333.7" r="4" fill="#f5ae6c"/>
-<circle cx="223.3" cy="330.9" r="4" fill="#f5ae6c"/>
-<circle cx="346.7" cy="321.4" r="4" fill="#f5ae6c"/>
-<circle cx="470.0" cy="298.3" r="4" fill="#f5ae6c"/>
+<polyline points="100.0,333.5 223.3,330.4 346.7,322.2 470.0,298.0 593.3,253.9 716.7,198.7 840.0,139.6" fill="none" stroke="#f5ae6c" stroke-width="2.5"/>
+<circle cx="100.0" cy="333.5" r="4" fill="#f5ae6c"/>
+<circle cx="223.3" cy="330.4" r="4" fill="#f5ae6c"/>
+<circle cx="346.7" cy="322.2" r="4" fill="#f5ae6c"/>
+<circle cx="470.0" cy="298.0" r="4" fill="#f5ae6c"/>
 <circle cx="593.3" cy="253.9" r="4" fill="#f5ae6c"/>
-<circle cx="716.7" cy="198.8" r="4" fill="#f5ae6c"/>
+<circle cx="716.7" cy="198.7" r="4" fill="#f5ae6c"/>
 <circle cx="840.0" cy="139.6" r="4" fill="#f5ae6c"/>
 <path d="M 315 417 h 15" stroke="#f5ae6c" stroke-width="3"/>
 <text x="336" y="422" fill="#dce5f4" font-size="13" font-family="sans-serif">K=2</text>
+<polyline points="100.0,333.7 223.3,330.2 346.7,321.5 470.0,298.2 593.3,253.4 716.7,198.2 840.0,139.0" fill="none" stroke="#80d1b0" stroke-width="2.5"/>
+<circle cx="100.0" cy="333.7" r="4" fill="#80d1b0"/>
+<circle cx="223.3" cy="330.2" r="4" fill="#80d1b0"/>
+<circle cx="346.7" cy="321.5" r="4" fill="#80d1b0"/>
+<circle cx="470.0" cy="298.2" r="4" fill="#80d1b0"/>
+<circle cx="593.3" cy="253.4" r="4" fill="#80d1b0"/>
+<circle cx="716.7" cy="198.2" r="4" fill="#80d1b0"/>
+<circle cx="840.0" cy="139.0" r="4" fill="#80d1b0"/>
+<path d="M 530 417 h 15" stroke="#80d1b0" stroke-width="3"/>
+<text x="551" y="422" fill="#dce5f4" font-size="13" font-family="sans-serif">K=3</text>
 </svg>

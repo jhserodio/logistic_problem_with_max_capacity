@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 450" role="img" aria-label="Candidatos de partição">
 <rect width="940" height="450" rx="12" fill="#111a28"/>
 <text x="35" y="36" font-size="21" font-family="sans-serif" font-weight="bold" fill="#f3f7fc">Candidatos de partição</text>
-<text x="35" y="60" font-size="13" font-family="sans-serif" fill="#b6c7de">Enumeração real na série K=2</text>
+<text x="35" y="60" font-size="13" font-family="sans-serif" fill="#b6c7de">K=2 sem poda e K=3 com capacidade restrita</text>
 <path d="M 100 367.00 H 840" stroke="#38485b" stroke-dasharray="4 5"/>
 <text x="88" y="371.00" font-size="12" font-family="sans-serif" text-anchor="end" fill="#b6c7de">10^3.0</text>
 <path d="M 100 310.00 H 840" stroke="#38485b" stroke-dasharray="4 5"/>
@@ -33,4 +33,14 @@
 <circle cx="840.0" cy="112.9" r="4" fill="#75b6fb"/>
 <path d="M 100 417 h 15" stroke="#75b6fb" stroke-width="3"/>
 <text x="121" y="422" fill="#dce5f4" font-size="13" font-family="sans-serif">K=2</text>
+<polyline points="100.0,335.6 223.3,295.8 346.7,259.9 470.0,219.7 593.3,179.9 716.7,143.6 840.0,103.5" fill="none" stroke="#f5ae6c" stroke-width="2.5"/>
+<circle cx="100.0" cy="335.6" r="4" fill="#f5ae6c"/>
+<circle cx="223.3" cy="295.8" r="4" fill="#f5ae6c"/>
+<circle cx="346.7" cy="259.9" r="4" fill="#f5ae6c"/>
+<circle cx="470.0" cy="219.7" r="4" fill="#f5ae6c"/>
+<circle cx="593.3" cy="179.9" r="4" fill="#f5ae6c"/>
+<circle cx="716.7" cy="143.6" r="4" fill="#f5ae6c"/>
+<circle cx="840.0" cy="103.5" r="4" fill="#f5ae6c"/>
+<path d="M 315 417 h 15" stroke="#f5ae6c" stroke-width="3"/>
+<text x="336" y="422" fill="#dce5f4" font-size="13" font-family="sans-serif">K=3</text>
 </svg>
