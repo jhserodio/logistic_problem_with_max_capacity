@@ -4,7 +4,7 @@ Esta análise complementa a [Parte A — modelo MILP](./modelagem.md), a [Parte 
 
 ## 1. Grafo dirigido do problema
 
-![Grafo com depósito central e seis clientes, sem legendas internas](./figuras/cvrp_grafo_problema.svg)
+![Grafo com depósito central e seis clientes, sem legendas internas](./img/cvrp_grafo_problema.svg)
 
 **Figura 1 — Grafo ilustrativo.** O vértice 0 representa o depósito; os clientes A, B, C, D, E e F correspondem, respectivamente, aos índices matemáticos 1 a 6. As setas indicam o sentido do deslocamento; os pesos são números em lozangos cinza-claros, posicionados sobre as arestas. O SVG mantém o fundo transparente.
 
@@ -118,25 +118,25 @@ Os quatro SVGs abaixo preservam **as mesmas coordenadas dos vértices**. Cada et
 
 ### Etapa 1 — Construir a rota azul
 
-![Etapa 1: depósito, clientes 1 e 2, retorno ao depósito](./figuras/cvrp_solucao_etapa_1.svg)
+![Etapa 1: depósito, clientes 1 e 2, retorno ao depósito](./img/cvrp_solucao_etapa_1.svg)
 
 **Figura 2 — Primeira rota.** Percurso visual: **0 → A → B → 0** (índices 0 → 1 → 2 → 0). Demanda atendida: **6**. Distância total: **13**. Ambas respeitam os limites.
 
 ### Etapa 2 — Acrescentar a rota verde
 
-![Etapa 2: rota azul atenuada e rota verde destacada](./figuras/cvrp_solucao_etapa_2.svg)
+![Etapa 2: rota azul atenuada e rota verde destacada](./img/cvrp_solucao_etapa_2.svg)
 
 **Figura 3 — Segunda rota.** Percurso visual: **0 → C → E → 0** (índices 0 → 3 → 5 → 0). Demanda atendida: **5**. Distância total: **17**. As rotas azul e verde não compartilham clientes.
 
 ### Etapa 3 — Acrescentar a rota laranja
 
-![Etapa 3: terceira rota destacada com as anteriores atenuadas](./figuras/cvrp_solucao_etapa_3.svg)
+![Etapa 3: terceira rota destacada com as anteriores atenuadas](./img/cvrp_solucao_etapa_3.svg)
 
 **Figura 4 — Terceira rota.** Percurso visual: **0 → F → D → 0** (índices 0 → 6 → 4 → 0). Demanda atendida: **7**. Distância total: **14**. Todos os clientes foram atendidos e o número de veículos utilizados atingiu o limite.
 
 ### Resultado — Todas as rotas simultaneamente
 
-![Resultado: três rotas coloridas](./figuras/cvrp_solucao_exemplo.svg)
+![Resultado: três rotas coloridas](./img/cvrp_solucao_exemplo.svg)
 
 **Figura 5 — Solução viável ilustrativa.** Os três circuitos partem do mesmo depósito, não repetem clientes e totalizam **44 unidades de distância**. As cores identificam somente as rotas: azul, verde e laranja.
 

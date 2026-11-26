@@ -1,6 +1,12 @@
-# CVRP determinístico em Rust
+# Exact CVRP in Rust · CVRP exato em Rust
 
-Resolvedor exato do CVRP com capacidade e distância máxima por veículo. Baseado nas [Partes A](requisitos/modelagem.md), [B](requisitos/formulacao.md) e [C](requisitos/extensao.md) da formulação matemática.
+**Documentação:** [Português (ptBr)](research/ptBr/README.md) · [English (enUs)](research/enUs/README.md)
+
+**Simulador / Interactive solver:** https://serodio.dev/en/apps/cvrp-solver/
+
+## Introdução
+
+Resolvedor exato do CVRP com capacidade e distância máxima por veículo. Baseado nas [Partes A](research/ptBr/modelagem.md), [B](research/ptBr/formulacao.md) e [C](research/ptBr/extensao.md) da formulação matemática.
 
 ## Executar
 
@@ -40,7 +46,7 @@ Uma instância válida com dois clientes:
 
 Valores de distância/demanda são inteiros (u64). Para valores fracionários, use unidades suficientemente pequenas (por exemplo, metros). O valor u64::MAX é reservado como sentinela, não podendo ser usado para max_route_distance. O problema permite custos assimétricos e não assume desigualdade triangular.
 
-A [instância de seis clientes](examples/instance.json) corresponde às demandas e aos nove arcos dos [grafos didáticos](requisitos/analise-grafica.md). Para completar a matriz dirigida, os demais arcos receberam artificialmente distância 100. Isso não equivale a um levantamento real. Nessa matriz **completa de teste**, a solução ótima tem três rotas de custo total 44.
+A [instância de seis clientes](examples/instance.json) corresponde às demandas e aos nove arcos dos [grafos didáticos](research/ptBr/analise-grafica.md). Para completar a matriz dirigida, os demais arcos receberam artificialmente distância 100. Isso não equivale a um levantamento real. Nessa matriz **completa de teste**, a solução ótima tem três rotas de custo total 44.
 
 ## Algoritmo
 
@@ -48,9 +54,9 @@ A [instância de seis clientes](examples/instance.json) corresponde às demandas
 2. Uma segunda PD particiona todos os clientes em até K rotas, usando um cliente âncora por subconjunto para eliminar permutações equivalentes.
 3. A reconstrução recupera a ordem das visitas e o custo de cada rota.
 
-**Parte E — Análise formal:** [Complexidade do algoritmo](requisitos/complexidade.md), com contagem dos estados, transições e consumo estimado de memória.
+**Parte E — Análise formal:** [Complexidade do algoritmo](research/ptBr/complexidade.md), com contagem dos estados, transições e consumo estimado de memória.
 
-**Parte F — Experimentos computacionais:** [relatório com tabelas, gráficos e discussão](requisitos/experimentos.md). Os [dados CSV](requisitos/resultados-f/dados.csv) e quatro gráficos SVG permitem conferir os resultados. A metodologia e as ferramentas de reprodução estão em `src/bin/experiment.rs` e `scripts/parte_f.py`.
+**Parte F — Experimentos computacionais:** [relatório com tabelas, gráficos e discussão](research/ptBr/experimentos.md). Os [dados CSV](research/ptBr/resultados-f/dados.csv) e quatro gráficos SVG permitem conferir os resultados. A metodologia e as ferramentas de reprodução estão em `src/bin/experiment.rs` e `scripts/parte_f.py`.
 
 Para reproduzir em ambiente Linux com Rust, Python 3 e `/usr/bin/time`:
 

@@ -4,7 +4,7 @@ This document complements [Part A — MILP modeling](./milp-model.md), [Part B �
 
 ## 1. Directed graph of the problem
 
-![Illustrative graph with a central depot and six customers](./img/cvrp_grafo_problema.svg)
+![Illustrative graph with a central depot and six customers](./img/directed-problem-graph.svg)
 
 **Figure 1 — Illustrative graph.** Vertex 0 is the depot. Customers A, B, C, D, E and F correspond to mathematical indices 1 through 6. Arrowheads indicate travel direction; light-gray diamonds label arc weights. The SVG has a transparent background.
 
@@ -114,25 +114,25 @@ The following figures preserve **identical vertex coordinates**. Each step empha
 
 ### Step 1 — Build the blue route
 
-![First route: depot, customers 1 and 2, return](./img/cvrp_solucao_etapa_1.svg)
+![First route: depot, customers 1 and 2, return](./img/route-step-1.svg)
 
 **Figure 2 — First route.** \(0\to A\to B\to0\) (indices \(0\to1\to2\to0\)). Served demand: **6**. Total distance: **13**. Both limits are satisfied.
 
 ### Step 2 — Add the green route
 
-![Second route: faded blue route and emphasized green route](./img/cvrp_solucao_etapa_2.svg)
+![Second route: faded blue route and emphasized green route](./img/route-step-2.svg)
 
 **Figure 3 — Second route.** \(0\to C\to E\to0\) (indices \(0\to3\to5\to0\)). Served demand: **5**. Total distance: **17**. The blue and green routes serve disjoint customers.
 
 ### Step 3 — Add the orange route
 
-![Third route emphasized, earlier routes faded](./img/cvrp_solucao_etapa_3.svg)
+![Third route emphasized, earlier routes faded](./img/route-step-3.svg)
 
 **Figure 4 — Third route.** \(0\to F\to D\to0\) (indices \(0\to6\to4\to0\)). Served demand: **7**. Total distance: **14**. Every customer is covered, and all three available vehicles are used.
 
 ### Final view — All routes
 
-![All three colored routes](./img/cvrp_solucao_exemplo.svg)
+![All three colored routes](./img/feasible-routes.svg)
 
 **Figure 5 — Illustrated feasible solution.** All routes start and end at the same depot, serve distinct customers, and have combined travel distance **44**. Blue, green and orange are purely route identifiers.
 

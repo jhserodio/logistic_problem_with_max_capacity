@@ -43,18 +43,18 @@ Cada repetição possui limite de 55 segundos: timeout é uma observação censu
 | K=3 | 18 | 6 | 262.144 | 169.236 | 307.564.872 | 519.6812 | 59.89 | 79 | 3 | 18 | optimal |
 | K=3 | 20 | 7 | 1.048.576 | 875.920 | 2.968.624.016 | 7370.9727 | 251.02 | 79 | 3 | 20 | optimal |
 
-O [CSV com contadores e medições](./resultados-f/dados.csv) inclui repetições,
+O [CSV com contadores e medições](./results/dados.csv) inclui repetições,
 posições alocadas, transições Held–Karp e estados/candidatos da partição.
 
 ## 3. Gráficos
 
-![Tempo por número de clientes](./resultados-f/tempo.svg)
+![Tempo por número de clientes](./img/tempo.svg)
 
-![Memória por número de clientes](./resultados-f/memoria.svg)
+![Memória por número de clientes](./img/memoria.svg)
 
-![Estados e posições Held–Karp](./resultados-f/estados.svg)
+![Estados e posições Held–Karp](./img/estados.svg)
 
-![Subconjuntos candidatos na partição](./resultados-f/candidatos.svg)
+![Subconjuntos candidatos na partição](./img/candidatos.svg)
 
 Os gráficos usam eixo vertical logarítmico. Séries interrompidas não recebem valores artificiais.
 
