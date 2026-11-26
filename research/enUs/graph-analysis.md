@@ -16,22 +16,28 @@ This document complements [Part A — MILP modeling](./milp-model.md), [Part B �
 
 **Customer set:**
 
-\[
+$
+
 C=\{1,2,3,4,5,6\}.
-\]
+
+$
 
 **Vertices and directed arcs of the full mathematical model:**
 
-\[
+$
+
 V=\{0\}\cup C,\qquad
 A=\{(i,j)\in V\times V:i\ne j\}.
-\]
+
+$
 
 **Nonnegative distances:**
 
-\[
+$
+
 c_{ij}\ge0.
-\]
+
+$
 
 **Note:** only nine arcs from the hand-calculated solution are shown. The Part A MILP and Part B DP admit all arcs between distinct vertices, so the full instance also needs distances for the remaining arcs. The illustration alone is not sufficient to prove global optimality.
 
@@ -66,9 +72,11 @@ We choose three disjoint customer subsets and construct a candidate route for ea
 
 **Candidate customer partition:**
 
-\[
+$
+
 T_1=\{1,2\},\qquad T_2=\{3,5\},\qquad T_3=\{6,4\}.
-\]
+
+$
 
 At each step, we add the next arc's travel distance and, when the destination is not the depot, the receiving customer's demand. The *demand served so far* column sums demands of customers already visited **on that route**. It does **not** mean physical remaining load. On returning to the depot, cumulative served demand remains the total for that route.
 
@@ -96,15 +104,19 @@ At each step, we add the next arc's travel distance and, when the destination is
 
 **Vehicles used:**
 
-\[
+$
+
 m=3\le K=3.
-\]
+
+$
 
 **Candidate solution total distance:**
 
-\[
+$
+
 Z_{\mathrm{candidate}}=13+17+14=44.
-\]
+
+$
 
 This hand calculation establishes **feasibility** for the displayed arcs. To prove a global optimum, the missing arc distances must be supplied and the exact algorithm executed. The repository's full **synthetic test matrix** fills those other arcs with cost 100 and does indeed yield an optimal cost of 44; this additional fact is not inferred from the partial figure.
 
@@ -116,19 +128,19 @@ The following figures preserve **identical vertex coordinates**. Each step empha
 
 ![First route: depot, customers 1 and 2, return](./img/route-step-1.svg)
 
-**Figure 2 — First route.** \(0\to A\to B\to0\) (indices \(0\to1\to2\to0\)). Served demand: **6**. Total distance: **13**. Both limits are satisfied.
+**Figure 2 — First route.** $0\to A\to B\to0$ (indices $0\to1\to2\to0$). Served demand: **6**. Total distance: **13**. Both limits are satisfied.
 
 ### Step 2 — Add the green route
 
 ![Second route: faded blue route and emphasized green route](./img/route-step-2.svg)
 
-**Figure 3 — Second route.** \(0\to C\to E\to0\) (indices \(0\to3\to5\to0\)). Served demand: **5**. Total distance: **17**. The blue and green routes serve disjoint customers.
+**Figure 3 — Second route.** $0\to C\to E\to0$ (indices $0\to3\to5\to0$). Served demand: **5**. Total distance: **17**. The blue and green routes serve disjoint customers.
 
 ### Step 3 — Add the orange route
 
 ![Third route emphasized, earlier routes faded](./img/route-step-3.svg)
 
-**Figure 4 — Third route.** \(0\to F\to D\to0\) (indices \(0\to6\to4\to0\)). Served demand: **7**. Total distance: **14**. Every customer is covered, and all three available vehicles are used.
+**Figure 4 — Third route.** $0\to F\to D\to0$ (indices $0\to6\to4\to0$). Served demand: **7**. Total distance: **14**. Every customer is covered, and all three available vehicles are used.
 
 ### Final view — All routes
 
@@ -142,48 +154,62 @@ The **hand calculation** checks one candidate partition. Part B performs an **ex
 
 **Stage 1 — Held–Karp finds the best visit order for each subset:**
 
-\[
-H(\{j\},j)=c_{0j},
-\]
+$
 
-\[
+H(\{j\},j)=c_{0j},
+
+$
+
+$
+
 H(T,j)=\min_{i\in T\setminus\{j\}}
 \left(H(T\setminus\{j\},i)+c_{ij}\right).
-\]
+
+$
 
 **Closed route cost (including depot return):**
 
-\[
+$
+
 D(T)=\min_{j\in T}\left(H(T,j)+c_{j0}\right).
-\]
+
+$
 
 **Subset demand and feasibility:**
 
-\[
+$
+
 A(T)=\sum_{i\in T}d_i,\qquad A(T)\le Q,\qquad D(T)\le L.
-\]
 
-**Stage 2 — Partition customers into at most \(K\) feasible routes:**
+$
 
-\[
+**Stage 2 — Partition customers into at most $K$ feasible routes:**
+
+$
+
 r_{Q,L}(T)=
 \begin{cases}
 D(T),&A(T)\le Q\ \text{and}\ D(T)\le L,\\
 +\infty,&\text{otherwise},
 \end{cases}
-\]
 
-\[
+$
+
+$
+
 G(S,k)=\min_{\substack{T\subseteq S,\ a(S)\in T\\r_{Q,L}(T)<+\infty}}
 \left(r_{Q,L}(T)+G(S\setminus T,k-1)\right).
-\]
+
+$
 
 **Boundary conditions and global optimum:**
 
-\[
+$
+
 G(\varnothing,k)=0,\qquad G(S,0)=+\infty\quad(S\ne\varnothing),
 \qquad Z^*=G(C,K).
-\]
+
+$
 
 The visualization depicts **one possible choice of subsets**. The recurrence determines the minimum cost among all admissible choices once the complete distance matrix is defined.
 

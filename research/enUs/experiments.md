@@ -7,13 +7,13 @@ The experiments measure how the **exact Rust CVRP solver** behaves as the number
 The source [Portuguese report](../ptBr/experimentos.md) records the original execution environment and timestamps. The measurements below reproduce **the same executions, numerical values, input instances, and computational protocol**, not a new benchmark.
 
 - Runner: GitHub Actions, Ubuntu 24.04, x86_64, a shared four-logical-CPU runner, compiled with Rust release optimizations.
-- Tested sizes: \(n\in\{8,10,12,14,16,18,20\}\).
-- Three controlled series: \(K=1\), \(K=2\), and \(K=3\).
-- Demand: 1 per customer; seed: 7; maximum completed route distance: \(L=1{,}000{,}000\).
+- Tested sizes: $n\in\{8,10,12,14,16,18,20\}$.
+- Three controlled series: $K=1$, $K=2$, and $K=3$.
+- Demand: 1 per customer; seed: 7; maximum completed route distance: $L=1{,}000{,}000$.
 - Directed distance matrix: deterministic integer costs from 1 to 29, defined by the modular formula in `src/bin/experiment.rs`.
-- \(K=1\) and \(K=2\) use \(Q=n\), with no capacity pruning; \(K=3\) uses \(Q=\lceil n/3\rceil\), forcing three routes and triggering capacity pruning.
+- $K=1$ and $K=2$ use $Q=n$, with no capacity pruning; $K=3$ uses $Q=\lceil n/3\rceil$, forcing three routes and triggering capacity pruning.
 - Time: median elapsed time of **unprofiled** `solve()`, measured using Rust's `Instant`.
-- Repetitions: three per case for \(n\le14\), two at \(n=16\), and one at \(n=18\) and \(n=20\).
+- Repetitions: three per case for $n\le14$, two at $n=16$, and one at $n=18$ and $n=20$.
 - Counters: measured in a separate `solve_with_metrics()` pass whose duration is **excluded** from the reported solver time.
 - Memory: maximum resident set size (RSS) measured with `/usr/bin/time -f %M`, including setup and the profiling pass; this is **not** solely the size of DP tables.
 - Time limit: 55 seconds per process. An expired run would be reported as censored (timeout), never as a completed optimum.
@@ -65,34 +65,42 @@ All plots use a logarithmic vertical scale, so changes across orders of magnitud
 
 The theoretical bounds are
 
-\[
+$
+
 T(n,K)=O(n^2 2^n+K3^n),\qquad
 M(n,K)=O((n+K)2^n).
-\]
 
-In the dense \(K=1\) and \(K=2\) series without pruning, the following mathematical counts were verified by the instrumented solver:
+$
 
-\[
+In the dense $K=1$ and $K=2$ series without pruning, the following mathematical counts were verified by the instrumented solver:
+
+$
+
 \text{subsets}=2^n,\qquad
 \text{Held--Karp states}=n2^{n-1},
-\]
 
-\[
+$
+
+$
+
 \text{Held--Karp transitions}=n(n-1)2^{n-2},
-\]
 
-\[
+$
+
+$
+
 \text{partition candidates}=(K-1)(3^n-1)/2
 \quad(K=1,2).
-\]
 
-These are exact counts for the chosen no-pruning instance family. For \(K=3\), they are **upper bounds**, and the measured counters show the effect of capacity pruning.
+$
 
-At \(n=20\):
+These are exact counts for the chosen no-pruning instance family. For $K=3$, they are **upper bounds**, and the measured counters show the effect of capacity pruning.
 
-- \(K=1\) examined 10,485,760 Held–Karp states and no additional partition candidates; the optimum used one route of cost 62.
-- \(K=2\) examined the same Held–Karp states plus 1,743,392,200 partition candidates, while the optimum still used one route of cost 62.
-- \(K=3,Q=7\) examined **875,920** Held–Karp states due to capacity pruning, yet enumerated **2,968,624,016** partition candidates. The optimum required three routes of total cost 79.
+At $n=20$:
+
+- $K=1$ examined 10,485,760 Held–Karp states and no additional partition candidates; the optimum used one route of cost 62.
+- $K=2$ examined the same Held–Karp states plus 1,743,392,200 partition candidates, while the optimum still used one route of cost 62.
+- $K=3,Q=7$ examined **875,920** Held–Karp states due to capacity pruning, yet enumerated **2,968,624,016** partition candidates. The optimum required three routes of total cost 79.
 
 The series illustrate that pruning the Held–Karp stage does **not** necessarily make the complete algorithm faster; partition enumeration can dominate. Measured execution times and RSS are compatible with exponential growth, but cannot in themselves prove asymptotic complexity because hardware, memory hierarchy, scheduling and sample size influence timings.
 
@@ -110,4 +118,4 @@ python3 scripts/parte_f.py --timeout 55 --seed 7
 
 The complete experiment code, collected counts, source CSV and SVG plots are available in the [repository](https://github.com/jhserodio/logistic_problem_with_max_capacity). No computed results are invented for timed-out runs.
 
-**Conclusion:** the observations support Part E's prediction that subset states scale as \(2^n\), while fleet partitioning may grow as \(3^n\). The exact method is valuable as a reference solver for small and moderately sized instances; larger stochastic logistics scenarios require different scalable approaches.
+**Conclusion:** the observations support Part E's prediction that subset states scale as $2^n$, while fleet partitioning may grow as $3^n$. The exact method is valuable as a reference solver for small and moderately sized instances; larger stochastic logistics scenarios require different scalable approaches.
