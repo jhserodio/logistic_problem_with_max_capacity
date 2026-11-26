@@ -2,7 +2,7 @@
 //! Demandas, capacidades e distâncias inteiras. Matriz pode ser assimétrica.
 //! Implementação inicialmente concentrada neste arquivo.
 
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 const MAX_CUSTOMERS: usize = 20;
 const INF: u64 = u64::MAX;
@@ -30,6 +30,27 @@ pub struct Route {
 pub struct Solution {
     pub total_distance: u128,
     pub routes: Vec<Route>,
+}
+
+/// Contadores de operações observadas, sem incluir posições descartadas pelas podas.
+#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize)]
+pub struct SolverMetrics {
+    /// Subconjuntos possíveis: 2^n (incluindo o vazio).
+    pub masks_total: u64,
+    /// Posições retangulares reservadas para H(T,j): n*2^n.
+    pub held_karp_slots: u64,
+    /// Estados H(T,j) efetivamente avaliados após poda de capacidade.
+    pub held_karp_states: u64,
+    /// Tentativas de predecessor nos estados H(T,j).
+    pub held_karp_transitions: u64,
+    /// Subconjuntos com rota fechada que respeita Q e L.
+    pub feasible_route_subsets: u64,
+    /// Posições reservadas em choices: (min(K,n)+1)*2^n.
+    pub partition_choice_slots: u64,
+    /// Estados G(S,k) examinados em k=2..K após poda de capacidade.
+    pub partition_states: u64,
+    /// Candidatos T contendo âncora efetivamente enumerados na segunda PD.
+    pub partition_candidates: u64,
 }
 
 impl Instance {
@@ -63,12 +84,33 @@ impl Instance {
     }
 }
 
-/// None indica inviabilidade; Err indica entrada inválida.
+/// API do solver preservada para CLI e WebAssembly; sem instrumentação.
 pub fn solve(instance: &Instance) -> Result<Option<Solution>, String> {
+    solve_internal::<false>(instance).map(|(answer, _)| answer)
+}
+
+/// Mesmo algoritmo exato com contadores para a Parte F.
+/// O perfilamento adiciona trabalho; não usar este método para medir
+/// o tempo do solver não instrumentado.
+pub fn solve_with_metrics(instance: &Instance)
+    -> Result<(Option<Solution>, SolverMetrics), String>
+{
+    solve_internal::<true>(instance)
+}
+
+fn solve_internal<const PROFILE: bool>(instance: &Instance)
+    -> Result<(Option<Solution>, SolverMetrics), String>
+{
     instance.validate()?;
     let n = instance.demands.len();
     let count = 1usize << n;
     let kmax = instance.max_vehicles.min(n);
+    let mut metrics = SolverMetrics::default();
+    if PROFILE {
+        metrics.masks_total = count as u64;
+        metrics.held_karp_slots = (count * n) as u64;
+        metrics.partition_choice_slots = ((kmax + 1) * count) as u64;
+    }
     let capacity = u128::from(instance.vehicle_capacity);
     let limit = instance.max_route_distance;
 
@@ -76,7 +118,7 @@ pub fn solve(instance: &Instance) -> Result<Option<Solution>, String> {
     if instance.demands.iter().any(|&d| d > instance.vehicle_capacity)
         || total_demand > capacity * kmax as u128
     {
-        return Ok(None);
+        return Ok((None, metrics));
     }
 
     let mut demand = vec![0u128; count];
@@ -100,6 +142,7 @@ pub fn solve(instance: &Instance) -> Result<Option<Solution>, String> {
             let last = last_bits.trailing_zeros() as usize;
             last_bits &= last_bits - 1;
             let index = mask * n + last;
+            if PROFILE { metrics.held_karp_states += 1; }
 
             if mask == (1usize << last) {
                 let initial = instance.distances[0][last + 1];
@@ -112,6 +155,7 @@ pub fn solve(instance: &Instance) -> Result<Option<Solution>, String> {
                 while candidates != 0 {
                     let prev = candidates.trailing_zeros() as usize;
                     candidates &= candidates - 1;
+                    if PROFILE { metrics.held_karp_transitions += 1; }
                     let previous_cost = h[earlier * n + prev];
                     if previous_cost == INF {
                         continue;
@@ -149,6 +193,7 @@ pub fn solve(instance: &Instance) -> Result<Option<Solution>, String> {
     previous[0] = 0;
     for mask in 1..count {
         if route_cost[mask] != INF {
+            if PROFILE { metrics.feasible_route_subsets += 1; }
             previous[mask] = u128::from(route_cost[mask]);
             choices[count + mask] = mask as u32;
         }
@@ -161,11 +206,13 @@ pub fn solve(instance: &Instance) -> Result<Option<Solution>, String> {
             if demand[mask] > capacity * k as u128 {
                 continue;
             }
+            if PROFILE { metrics.partition_states += 1; }
             let anchor = 1usize << mask.trailing_zeros();
             let others = mask ^ anchor;
             let mut extra = others;
             loop {
                 let selected = extra | anchor;
+                if PROFILE { metrics.partition_candidates += 1; }
                 let cost = route_cost[selected];
                 if cost != INF {
                     let remaining = mask ^ selected;
@@ -189,7 +236,7 @@ pub fn solve(instance: &Instance) -> Result<Option<Solution>, String> {
 
     let full = count - 1;
     if previous[full] == u128::MAX {
-        return Ok(None);
+        return Ok((None, metrics));
     }
 
     // Reconstrução: subconjuntos escolhidos e predecessor de Held–Karp.
@@ -236,7 +283,7 @@ pub fn solve(instance: &Instance) -> Result<Option<Solution>, String> {
         remaining_vehicles -= 1;
     }
 
-    Ok(Some(Solution { total_distance: previous[full], routes }))
+    Ok((Some(Solution { total_distance: previous[full], routes }), metrics))
 }
 
 #[cfg(test)]
@@ -251,6 +298,34 @@ mod tests {
             max_vehicles: k,
             max_route_distance: l,
         }
+    }
+
+
+    #[test]
+    fn metrics_match_exact_state_and_transition_counts_for_unconstrained_case() {
+        let instance = input(&[1, 1, 1],
+            &[&[0,1,1,1], &[1,0,1,1], &[1,1,0,1], &[1,1,1,0]], 3, 2, 100);
+        let plain = solve(&instance).unwrap().unwrap();
+        let (profiled, metrics) = solve_with_metrics(&instance).unwrap();
+        assert_eq!(profiled.unwrap(), plain);
+        assert_eq!(metrics.masks_total, 8);
+        assert_eq!(metrics.held_karp_slots, 24);
+        assert_eq!(metrics.held_karp_states, 12); // n*2^(n-1)
+        assert_eq!(metrics.held_karp_transitions, 12); // n(n-1)*2^(n-2)
+        assert_eq!(metrics.feasible_route_subsets, 7);
+        assert_eq!(metrics.partition_choice_slots, 24);
+        assert_eq!(metrics.partition_states, 7);
+        assert_eq!(metrics.partition_candidates, 13); // (3^n - 1)/2
+    }
+    #[test]
+    fn instrumented_and_plain_result_identical_for_academic_fixture() {
+        let instance: Instance = serde_json::from_str(include_str!("../examples/instance.json")).unwrap();
+        let solution = solve(&instance).unwrap();
+        let (profiled, counts) = solve_with_metrics(&instance).unwrap();
+        assert_eq!(solution, profiled);
+        assert_eq!(counts.masks_total, 64);
+        assert!(counts.held_karp_states > 0);
+        assert!(counts.partition_candidates > 0);
     }
 
     #[test]
